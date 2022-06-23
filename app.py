@@ -2,7 +2,6 @@ from types import NoneType
 from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 #from flask_table import Table, Col
-import methods as m
 import random
 
 
@@ -16,6 +15,8 @@ else:
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://***REMOVED***:***REMOVED***@***REMOVED***:5432/***REMOVED***'
 
 db = SQLAlchemy(app)
+
+import methods as m
 
 @app.route('/')
 def home():

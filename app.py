@@ -14,12 +14,13 @@ if ENV == 'dev':
 else:
     app.debug = False
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://***REMOVED***:***REMOVED***@***REMOVED***:5432/***REMOVED***'
+
 db = SQLAlchemy(app)
 
 @app.route('/')
 def home():
     title, header, data = m.printCareerAvg()
-    return render_template('landing.html', header = header)
+    return render_template('landing.html')
 
 @app.route('/CareerAvg')
 def CareerAvg():

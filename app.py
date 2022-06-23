@@ -12,7 +12,7 @@ if ENV == 'dev':
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:***REMOVED***@localhost/NBA2K22'
 else:
     app.debug = False
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://***REMOVED***:***REMOVED***@***REMOVED***:5432/***REMOVED***'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://***REMOVED***:***REMOVED***@***REMOVED***:5432/***REMOVED***'
 
 db = SQLAlchemy(app)
 

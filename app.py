@@ -14,12 +14,13 @@ if ENV == 'dev':
 else:
     app.debug = False
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://hcazhrrpiolcch:0b2fd0a41aeef0912b7a52bd6b815eb8f640677233ac19db0facdd03639d44d4@ec2-52-72-99-110.compute-1.amazonaws.com:5432/d61t5isgsk4kcq'
+
 db = SQLAlchemy(app)
 
 @app.route('/')
 def home():
     title, header, data = m.printCareerAvg()
-    return render_template('landing.html', header = header)
+    return render_template('landing.html')
 
 @app.route('/CareerAvg')
 def CareerAvg():

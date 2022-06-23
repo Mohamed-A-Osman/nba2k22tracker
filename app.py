@@ -1,7 +1,7 @@
 from types import NoneType
 from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
-from flask_table import Table, Col
+#from flask_table import Table, Col
 import methods as m
 import random
 

@@ -1,8 +1,7 @@
 from fileinput import close
 from collections import Counter
 from re import T
-from prettytable import PrettyTable
-from prettytable.colortable import ColorTable,Themes
+#from prettytable import PrettyTable
 import numpy as np
 from numpy import array, average
 import psycopg2 

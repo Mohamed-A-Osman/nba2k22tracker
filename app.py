@@ -12,7 +12,7 @@ if ENV == 'dev':
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:mohamed01@localhost/NBA2K22'
 else:
     app.debug = False
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://hcazhrrpiolcch:0b2fd0a41aeef0912b7a52bd6b815eb8f640677233ac19db0facdd03639d44d4@ec2-52-72-99-110.compute-1.amazonaws.com:5432/d61t5isgsk4kcq'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://hcazhrrpiolcch:0b2fd0a41aeef0912b7a52bd6b815eb8f640677233ac19db0facdd03639d44d4@ec2-52-72-99-110.compute-1.amazonaws.com:5432/d61t5isgsk4kcq'
 
 db = SQLAlchemy(app)
 

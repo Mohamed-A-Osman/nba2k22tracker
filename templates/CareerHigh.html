@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>2K22 Stat Tracker</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="../static/style.css"> 
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@600&display=swap" rel="stylesheet">
+<script src="https://kit.fontawesome.com/14d3000004.js" crossorigin="anonymous"></script>
+<script src ="../static/sort.js"></script>
+<style>
+html,body,h1,h2,h3,h4,h5 {font-family: 'Source Sans Pro', sans-serif}
+</style>
+</head>
+<body class="w3-light-grey" style="overflow: auto;">
+    
+
+<!-- Top container -->
+<div class="w3-bar w3-top w3-black w3-large" style="z-index:4">
+  <button class="w3-bar-item w3-button w3-hide-large w3-hover-none w3-hover-text-light-grey" onclick="w3_open();"><i class="fa fa-bars"></i>  Menu</button>
+  <span class="w3-bar-item w3-right">
+    <img src="../static/logo_nba2kcom_2k22.avif" alt="2K22 logo" height="35px"/>
+  </span>
+</div>
+
+<!-- Sidebar/menu -->
+<nav class="w3-sidebar w3-collapse w3-white w3-animate-left" style="z-index:3;width:300px;" id="mySidebar"><br>
+
+  <hr>
+  <div class="w3-container">
+    <h5>Dashboard</h5>
+  </div>
+  <div class="w3-bar-block">
+    <a href="#" class="w3-bar-item w3-button w3-padding-16 w3-hide-large w3-dark-grey w3-hover-black" onclick="w3_close()" title="close menu"><i class="fa fa-remove fa-fw"></i>  Close Menu</a>
+    <a href="/CareerAvg" class="w3-bar-item w3-button w3-padding"><i class="fa fa-users fa-fw"></i> Career Averages</a>
+    <a href="/Matchup" class="w3-bar-item w3-button w3-padding"><i class="fa fa-balance-scale-left fa-fw"></i>  Matchup Data</a>
+    <a href="/Teammate" class="w3-bar-item w3-button w3-padding"><i class="fa fa-user-plus fa-fw"></i>  Teammate Stats</a>
+    <a href="/CareerHigh" class="w3-bar-item w3-button w3-padding w3-blue"><i class="fa fa-bullseye fa-fw"></i>  Career Highs</a>
+  </div>
+</nav>
+
+
+<!-- Overlay effect when opening sidebar on small screens -->
+<div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
+
+<!-- !PAGE CONTENT! -->
+<div class="w3-main" style="margin-left:300px;margin-top:43px;">
+
+  <!-- Header -->
+  <header class="w3-container" style="padding-top:22px">
+    <a href="/"><h5><b><i class="fa fa-home"></i></a> Home</b></h5>
+  </header>
+
+  <div class="w3-row-padding w3-margin-bottom">
+    <div class="w3-quarter">
+        <form action="/CareerHigh" method = "GET">
+            <div id="formelems">
+                <label for="cat"></label>
+                <select name = "cat" id="Category Select">
+                    <option hidden label = '{{cat}}' value='{{cat}}' class="op"></option>
+                    <option label = "Points" value="Points" class="op"></option>
+                    <option label = "Rebounds" value="Rebounds" class="op"></option>
+                    <option label = "Assists" value="Assists" class="op"></option>
+                    <option label = "Steals" value="Steals" class="op"></option>
+                    <option label = "Blocks" value="Blocks" class="op"></option>
+                    <option label = "Turnovers" value="Turnovers" class="op"></option>
+                    <option label = "FGM" value="FGM" class="op"></option>
+                    <option label = "3PM" value="3PM" class="op"></option>
+                </select>
+                <script>
+                  const selected = document.getElementById("Category Select");
+                  const optionsList = document.getElementsByClassName("op");
+                  optionsList.forEach(o=>{
+                    o.addEventListener("click", ()=>{
+                      selected.innerHTML = o.querySelector("label").innerHTML;
+                    })
+                  })
+
+                </script>
+           
+            <button type="submit">Filter</button>
+        </div>
+        </form>
+    
+  </div>
+
+  <div class="w3-panel">
+    <div class="w3-row-padding" style="margin:0 -16px" >
+        <h5>{{title}}</h5>
+      </div>
+          <table class="w3-table w3-striped w3-white w3-border w3-centered w3-bordered" id="mytable">
+            <thead>
+              <tr class="header">
+                <th id="0" data-name ={{header[0]}} data-col = "neither">{{header[0]}}</th>
+                <th id="1" data-name ={{header[1]}} data-col = "neither">{{header[1]}}</th>
+
+  
+              </tr>
+            </thead>
+            <script>
+              sort({{data|tojson}});
+            </script>
+            
+            <tbody id="tb">
+  
+            </tbody>
+  
+          </table>
+        <script>
+            document.addEventListener("DOMContentLoaded", function(){
+                createTable({{data|tojson}}, false);
+            });
+                
+            function createTable(Udata, sortFlag) {
+                if(sortFlag == false){
+                  data = Udata.sort((a, b) => parseFloat(b[1]) - parseFloat(a[1]));
+                }else{
+                  data = Udata;
+                }
+
+                var table = document.getElementById("tb");  //makes a table element for the page
+                table.innerHTML = '';
+                for(var i = 0; i < data.length; i++) {
+                    var row = table.insertRow(i);
+                    for(var j = 0; j<data[i].length; j++){
+                        row.insertCell(j).innerHTML = data[i][j];
+                    }
+                }
+            }
+        </script>
+        
+  </div>
+
+
+  <hr>
+  <script>
+    // Get the Sidebar
+    var mySidebar = document.getElementById("mySidebar");
+    
+    // Get the DIV with overlay effect
+    var overlayBg = document.getElementById("myOverlay");
+    
+    // Toggle between showing and hiding the sidebar, and add overlay effect
+    function w3_open() {
+      if (mySidebar.style.display === 'block') {
+        mySidebar.style.display = 'none';
+        overlayBg.style.display = "none";
+      } else {
+        mySidebar.style.display = 'block';
+        overlayBg.style.display = "block";
+      }
+    }
+    
+    // Close the sidebar with the close button
+    function w3_close() {
+      mySidebar.style.display = "none";
+      overlayBg.style.display = "none";
+    }
+    </script>

@@ -7,7 +7,7 @@
     --rightmid-bg-color: rgba(43,43,43,0.8);
     --left-btn-hover-color: rgba(0,0,0,1);
     --leftmid-btn-hover-color: rgba(0,0,0,1);
-    --rightmid-btn-hover-color: rgba(0,0,0,1);
+    --rightmid-btn-hover-color: rgb(0, 0, 0);
     --right-btn-hover-color: rgba(0,0,0,1);
     --hover-width: 58%;
     --other-width: 14%;
@@ -39,11 +39,11 @@ h1{
 
 .btn {
     position: absolute;
-    display: flex;
+   /*display: flex;*/
     align-items: center;
     justify-content: center;
     left: 50%;
-    top: 90%;
+    top: 60%;
     transform: translate(-50%);
     text-decoration: none;
     color: white;
@@ -53,8 +53,25 @@ h1{
     text-transform: uppercase;
     width: 10rem;
     padding: 1rem;
+    border-radius: 25px;
     white-space: nowrap;
-     
+    display: none;
+
+    
+}
+
+
+.split.left:hover .btn{
+    display: flex;
+}
+.split.leftmid:hover .btn{
+    display: flex;
+}
+.split.rightmid:hover .btn{
+    display: flex;
+}
+.split.right:hover .btn{
+    display: flex;
 }
 
 .split.left .btn {

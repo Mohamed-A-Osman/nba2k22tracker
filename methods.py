@@ -311,17 +311,4 @@ def printOppsByPos(name, pos, included):
          "{:.2f}".format(stats[9]*100/denom2)])
     return title, field_names, final_list
 
-if __name__ == '__main__':
-    #printCareerAvg()
 
-    #printAvgbyPos('PG', True)
-
-    #printTeammates('TripleA_00')
-
-    #printOpps('luqmansheikh')
-    #printOppsByPos('moh-_-1', 'C', True)
-    #printCareerHighs('Points')
-    #printSingleTeammate('BallaHendrix')
-    #printCareerAvg()
-    #printSingleTeammate('moh-_-1')
-    print(Names)

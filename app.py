@@ -3,16 +3,16 @@ from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 #from flask_table import Table, Col
 import random
-
+from urls import remoteURL, localURL
 
 app = Flask(__name__)
 ENV = 'prod'
 if ENV == 'dev':
     app.debug = True
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:mohamed01@localhost/NBA2K22'
+    app.config['SQLALCHEMY_DATABASE_URI'] = localURL
 else:
     app.debug = False
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://hcazhrrpiolcch:0b2fd0a41aeef0912b7a52bd6b815eb8f640677233ac19db0facdd03639d44d4@ec2-52-72-99-110.compute-1.amazonaws.com:5432/d61t5isgsk4kcq'
+    app.config['SQLALCHEMY_DATABASE_URI'] = remoteURL
 
 db = SQLAlchemy(app)
 

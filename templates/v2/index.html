@@ -3,54 +3,135 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>2K22 Stat Tracker v2</title>
+<title>2K22 Stat Tracker</title>
 <script src="{{ url_for('static', filename='theme.js') }}"></script>
-<link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@600&display=swap" rel="stylesheet">
-<style>
-:root {
-    color-scheme: light;
-    --bg: #f1f1f1;
-    --text: #111111;
-    --link: #482e85;
-}
-[data-theme="dark"] {
-    color-scheme: dark;
-    --bg: #121212;
-    --text: #e8e8e8;
-    --link: #b9a4f0;
-}
-body {
-    margin: 0;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    font-family: 'Source Sans Pro', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-}
-a { color: var(--link); }
-.theme-toggle {
-    position: fixed;
-    top: 1rem;
-    right: 1rem;
-    font: inherit;
-    padding: 0.4rem 0.9rem;
-    border-radius: 25px;
-    border: 1px solid currentColor;
-    background: transparent;
-    color: var(--text);
-    cursor: pointer;
-}
-</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='v2.css') }}">
 </head>
 <body>
-<button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">Light / Dark</button>
-<main>
-    <h1>2K22 Stat Tracker v2</h1>
-    <p>A new look is on the way. Same stats, new design.</p>
-    <p><a href="/">Back to the current site</a></p>
-</main>
+<div class="page">
+  <svg class="court" viewBox="0 0 860 860" fill="none" stroke-width="2" aria-hidden="true">
+    <circle cx="430" cy="430" r="190"></circle>
+    <circle cx="430" cy="430" r="64"></circle>
+    <path d="M40 430 H820"></path>
+    <path d="M430 40 A390 390 0 0 1 820 430"></path>
+  </svg>
+
+  <header class="topbar">
+    <a class="wordmark" href="{{ url_for('v2.home') }}">
+      <span class="display">2K22</span>
+      <span class="wordmark-text">STAT TRACKER</span>
+    </a>
+    <nav class="nav" aria-label="Stat pages">
+      <a class="nav-link" href="{{ url_for('v1.CareerAvg') }}">Averages</a>
+      <a class="nav-link" href="{{ url_for('v1.Matchup') }}">Matchups</a>
+      <a class="nav-link" href="{{ url_for('v1.Teammate') }}">Teammates</a>
+      <a class="nav-link" href="{{ url_for('v1.CareerHigh') }}">Highs</a>
+      <a class="nav-upload" href="{{ url_for('v1.Upload') }}">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"></path></svg>
+        Upload
+      </a>
+      <button class="icon-button" type="button" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark mode">
+        <svg class="theme-icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
+        <svg class="theme-icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>
+      </button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow">NBA 2K22 · {{ h.players }} players · {{ h.games }} games</div>
+        <h1 class="display">Who's carrying<br><span>the squad?</span></h1>
+        <p class="lede">Every game we played from {{ h.first_month }} to {{ h.last_month }}, broken down by player, matchup and lineup.</p>
+        <div class="actions">
+          <a class="button" href="{{ url_for('v1.CareerAvg') }}">
+            See career averages
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+          </a>
+          <a class="subtle-link" href="{{ url_for('v1.Upload') }}">Upload a box score · coming soon</a>
+        </div>
+      </div>
+
+      {% if h.leader %}
+      <aside class="leader" aria-label="Scoring leader">
+        <div class="label">SCORING LEADER</div>
+        <div class="leader-name display">{{ h.leader.name }}</div>
+        <div class="leader-stats">
+          <div class="leader-stat"><span class="display">{{ h.leader.ppg }}</span><span class="leader-stat-label">PPG</span></div>
+          <div class="leader-stat"><span class="display">{{ h.leader.win_pct }}%</span><span class="leader-stat-label">WIN %</span></div>
+          <div class="leader-stat"><span class="display">{{ h.leader.fg_pct }}%</span><span class="leader-stat-label">FG %</span></div>
+        </div>
+        {% if h.record and h.record.name == h.leader.name %}
+        <div class="leader-note">Also owns the best single game: {{ h.record.points }} points.</div>
+        {% endif %}
+      </aside>
+      {% endif %}
+    </section>
+
+    <nav class="sections" aria-label="Sections">
+      <a class="card" href="{{ url_for('v1.CareerAvg') }}">
+        <div class="card-top">
+          <span class="card-index display">01</span>
+          <svg class="card-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+        </div>
+        <h2 class="display">Career Averages</h2>
+        {% if h.leader %}
+        <p><strong>{{ h.leader.name }}</strong> leads the group at {{ h.leader.ppg }} points a game</p>
+        {% else %}
+        <p>Everyone's per-game numbers</p>
+        {% endif %}
+      </a>
+
+      {% set r = h.rivalry %}
+      <a class="card" href="{{ url_for('v1.Matchup', Name=r.players[0], Position='All Positions') if r else url_for('v1.Matchup') }}">
+        <div class="card-top">
+          <span class="card-index display">02</span>
+          <svg class="card-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+        </div>
+        <h2 class="display">Matchups</h2>
+        {% if r %}
+        <p><strong>{{ r.players[0] }} vs {{ r.players[1] }}</strong>: {{ r.games }} meetings, {% if r.leader %}{{ r.leader }} leads {{ r.score }}{% else %}tied {{ r.score }}{% endif %}</p>
+        {% else %}
+        <p>How everyone does against each opponent</p>
+        {% endif %}
+      </a>
+
+      {% set d = h.duo %}
+      <a class="card" href="{{ url_for('v1.Teammate', Name=d.players[0], Type='Individual') if d else url_for('v1.Teammate') }}">
+        <div class="card-top">
+          <span class="card-index display">03</span>
+          <svg class="card-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+        </div>
+        <h2 class="display">Teammates</h2>
+        {% if d %}
+        <p><strong>{{ d.players[0] }} + {{ d.players[1] }}</strong> go {{ d.record }} when they share a team</p>
+        {% else %}
+        <p>Who plays best together</p>
+        {% endif %}
+      </a>
+
+      <a class="card" href="{{ url_for('v1.CareerHigh', cat='Points') }}">
+        <div class="card-top">
+          <span class="card-index display">04</span>
+          <svg class="card-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+        </div>
+        <h2 class="display">Career Highs</h2>
+        {% if h.record %}
+        <p><strong>{{ h.record.points }} points</strong> by {{ h.record.name }} is the single-game record</p>
+        {% else %}
+        <p>Everyone's best single games</p>
+        {% endif %}
+      </a>
+    </nav>
+
+    <a class="mobile-upload" href="{{ url_for('v1.Upload') }}">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"></path></svg>
+      Upload a box score · coming soon
+    </a>
+  </main>
+</div>
 </body>
 </html>

@@ -1,0 +1,45 @@
+name: Deploy to AWS
+
+# Manual only for now: Actions tab -> Deploy to AWS -> Run workflow
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write  # lets the job sign in to AWS through GitHub OIDC
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - uses: aws-actions/setup-sam@v2
+        with:
+          use-installer: true
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Build
+        run: sam build
+
+      - name: Deploy
+        run: sam deploy --no-fail-on-empty-changeset --parameter-overrides AlertEmail=${{ vars.ALERT_EMAIL }}
+
+      - name: Upload static files
+        run: |
+          bucket=$(aws cloudformation describe-stacks --stack-name nba2k22tracker \
+            --query "Stacks[0].Outputs[?OutputKey=='StaticBucketName'].OutputValue" --output text)
+          aws s3 sync static/ "s3://$bucket/static/" --delete
+
+      - name: Show site URL
+        run: |
+          aws cloudformation describe-stacks --stack-name nba2k22tracker \
+            --query "Stacks[0].Outputs[?OutputKey=='SiteUrl'].OutputValue" --output text

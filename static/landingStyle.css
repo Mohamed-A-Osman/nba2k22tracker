@@ -95,6 +95,22 @@ h1{
     
 
 }
+.upload-link {
+    position: fixed;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 10;
+    color: white;
+    background-color: rgba(0,0,0,0.6);
+    border: white solid 0.1rem;
+    border-radius: 25px;
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-decoration: none;
+}
+
 .container{
     position: relative;
     width: 100%;

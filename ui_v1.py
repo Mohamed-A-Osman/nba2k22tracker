@@ -71,3 +71,20 @@ def CareerHigh():
     title, header, data = stats.career_highs(cat)
 
     return render_template('CareerHigh.html', title=title, header=header, data=data, cat=cat)
+
+
+@bp.route('/Upload', methods=['GET', 'POST'])
+def Upload():
+    message = None
+    if request.method == 'POST':
+        # OCR isn't built yet, so the file is thrown away without being saved
+        if 'screenshot' in request.files:
+            message = "OCR isn't ready yet, so your upload wasn't saved."
+        else:
+            message = "Pick an image to upload first."
+    return render_template('upload.html', message=message)
+
+
+@bp.app_errorhandler(413)
+def upload_too_large(error):
+    return render_template('upload.html', message="That file is over 5 MB, so it wasn't uploaded."), 413

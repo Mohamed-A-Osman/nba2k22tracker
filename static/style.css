@@ -1,3 +1,60 @@
+/* Theme colors. theme.js sets data-theme on <html>; light is the default. */
+:root {
+    color-scheme: light;
+    --page-bg: #f1f1f1;
+    --surface: #ffffff;
+    --row: #fafafa;
+    --row-alt: #f1f1f1;
+    --text: #000000;
+    --border: #dddddd;
+    --hover: #cccccc;
+    --shadow: rgba(64,64,64,.7);
+}
+
+[data-theme="dark"] {
+    color-scheme: dark;
+    --page-bg: #121212;
+    --surface: #1e1e1e;
+    --row: #1e1e1e;
+    --row-alt: #2a2a2a;
+    --text: #e8e8e8;
+    --border: #3a3a3a;
+    --hover: #333333;
+    --shadow: rgba(0,0,0,.8);
+}
+
+/* w3.css colors use !important, so these do too (this file loads after w3.css) */
+.w3-light-grey {
+    background-color: var(--page-bg) !important;
+    color: var(--text) !important;
+}
+.w3-white {
+    background-color: var(--surface) !important;
+    color: var(--text) !important;
+}
+.w3-border {
+    border-color: var(--border) !important;
+}
+.w3-sidebar .w3-button:hover {
+    background-color: var(--hover) !important;
+    color: var(--text) !important;
+}
+.w3-striped tbody tr:nth-child(even) {
+    background-color: var(--row-alt);
+}
+.w3-bordered tr {
+    border-bottom-color: var(--border);
+}
+hr {
+    border-top-color: var(--border);
+}
+
+/* Show the moon in light mode and the sun in dark mode */
+[data-theme="dark"] .theme-icon-moon,
+:root:not([data-theme="dark"]) .theme-icon-sun {
+    display: none;
+}
+
 .imagesidebar{
     height: 50%;
     width: 80%;
@@ -21,7 +78,7 @@
     width: 100%; 
     border-collapse:collapse;
     border-spacing: 0;
-    box-shadow: 0 2px 15px rgba(64,64,64,.7);
+    box-shadow: 0 2px 15px var(--shadow);
     border-radius: 12px 12px 0 0;
     overflow:hidden;
     margin: 0 -16px;   
@@ -43,11 +100,11 @@
    }
     tr{
     width: 100%;
-    background-color: #fafafa;
+    background-color: var(--row);
     font-family: 'Montserrat', sans-serif;
    }
   tr:nth-child(even){
-    background-color: #eeeeee;
+    background-color: var(--row-alt);
    }
 
    #box{

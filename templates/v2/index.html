@@ -4,8 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>2K22 Stat Tracker v2</title>
+<script src="{{ url_for('static', filename='theme.js') }}"></script>
 <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@600&display=swap" rel="stylesheet">
 <style>
+:root {
+    color-scheme: light;
+    --bg: #f1f1f1;
+    --text: #111111;
+    --link: #482e85;
+}
+[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #121212;
+    --text: #e8e8e8;
+    --link: #b9a4f0;
+}
 body {
     margin: 0;
     min-height: 100vh;
@@ -14,13 +27,26 @@ body {
     justify-content: center;
     text-align: center;
     font-family: 'Source Sans Pro', sans-serif;
-    background: #333;
-    color: #fafafa;
+    background: var(--bg);
+    color: var(--text);
 }
-a { color: #b9a4f0; }
+a { color: var(--link); }
+.theme-toggle {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    font: inherit;
+    padding: 0.4rem 0.9rem;
+    border-radius: 25px;
+    border: 1px solid currentColor;
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+}
 </style>
 </head>
 <body>
+<button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">Light / Dark</button>
 <main>
     <h1>2K22 Stat Tracker v2</h1>
     <p>A new look is on the way. Same stats, new design.</p>

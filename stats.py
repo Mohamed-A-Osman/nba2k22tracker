@@ -1,5 +1,5 @@
 """Stat page calculations. Each page is a single SQL query over the player_games view."""
-from data import query
+from data import cached, query
 
 POSITIONS = ("PG", "SG", "SF", "PF", "C")
 # Career-high categories users can pick. Also the only column names ever put into SQL.
@@ -24,10 +24,12 @@ def _format_row(label, games, wins, *averages):
             *(f"{value:.2f}" for value in averages)]
 
 
+@cached
 def names():
     return [row[0] for row in query('SELECT DISTINCT "Name" FROM player_stats ORDER BY 1')]
 
 
+@cached
 def career_averages(pos=None):
     if pos is None:
         title = "CAREER AVERAGES"
@@ -58,6 +60,7 @@ def _stats_by_label(name, labels_sql, pos=None):
     return [_format_row(*row) for row in query(sql, params)]
 
 
+@cached
 def matchups(name, pos=None):
     if pos is None:
         title = name + "'s Stats When Matched Up Against:"
@@ -73,6 +76,7 @@ def matchups(name, pos=None):
     return title, ['Opponent', 'Occurences', *STAT_HEADERS], _stats_by_label(name, labels_sql, pos)
 
 
+@cached
 def teammate_combos(name):
     title = name + "'s Stats When He Plays With"
     # Label = everyone else on the player's team that game
@@ -85,6 +89,7 @@ def teammate_combos(name):
     return title, ['Teammates', 'Occurences', *STAT_HEADERS], _stats_by_label(name, labels_sql)
 
 
+@cached
 def single_teammate(name):
     title = name + "'s Stats When He Plays With"
     # One label per teammate per game, so every game with them counts once in their row
@@ -96,6 +101,7 @@ def single_teammate(name):
     return title, ['Teammate', 'Occurences', *STAT_HEADERS], _stats_by_label(name, labels_sql)
 
 
+@cached
 def career_highs(cat):
     if cat not in ALLOWED_CATS:
         raise ValueError(f"Unknown category: {cat}")

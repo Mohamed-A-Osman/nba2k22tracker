@@ -1,4 +1,6 @@
 """Stat page calculations. Each page is a single SQL query over the player_games view."""
+from datetime import datetime
+
 from data import cached, query
 
 POSITIONS = ("PG", "SG", "SF", "PF", "C")
@@ -107,3 +109,75 @@ def career_highs(cat):
         raise ValueError(f"Unknown category: {cat}")
     rows = query(f'SELECT "Name", max("{cat}") FROM player_stats GROUP BY "Name"')
     return "CAREER HIGHS - " + cat.upper(), ['Name', cat], [[name, int(value)] for name, value in rows]
+
+
+# Two players need this many games on the same team to count as a duo
+DUO_MIN_GAMES = 15
+
+
+def _month(timestamp):
+    return datetime.strptime(timestamp[:6], "%Y%m").strftime("%B %Y") if timestamp else ""
+
+
+def _duo(a, b, games, wins):
+    return {"players": (a, b), "record": f"{wins}–{games - wins}"}
+
+
+def _rivalry(a, b, games, a_wins):
+    b_wins = games - a_wins
+    leader = a if a_wins > b_wins else b if b_wins > a_wins else None
+    return {"players": (a, b), "games": games, "leader": leader,
+            "score": f"{max(a_wins, b_wins)}–{min(a_wins, b_wins)}"}
+
+
+@cached
+def landing_highlights():
+    """Headline numbers for the v2 landing page."""
+    games, players, first, last = query("""
+        SELECT count(DISTINCT "gameID"), count(DISTINCT "Name"),
+               min(regexp_extract("gameID", '(\\d{14})', 1)),
+               max(regexp_extract("gameID", '(\\d{14})', 1))
+        FROM player_stats
+    """)[0]
+
+    _, header, averages = career_averages()
+    ppg, win_pct, fg_pct = header.index('PPG'), header.index('W%'), header.index('FG%')
+    top = max(averages, key=lambda row: float(row[ppg]), default=None)
+    leader = None
+    if top:
+        leader = {"name": top[0], "ppg": f"{float(top[ppg]):.1f}",
+                  "win_pct": f"{float(top[win_pct]):.1f}", "fg_pct": f"{float(top[fg_pct]):.1f}"}
+
+    record = max(career_highs("Points")[2], key=lambda row: row[1], default=None)
+
+    duo = query("""
+        SELECT a."Name", b."Name", count(*), sum(a.won::INT)
+        FROM player_games a
+        JOIN player_games b ON b."gameID" = a."gameID" AND b."Team" = a."Team" AND b."Name" > a."Name"
+        GROUP BY a."Name", b."Name"
+        HAVING count(*) >= $min_games
+        ORDER BY avg(a.won::INT) DESC, count(*) DESC
+        LIMIT 1
+    """, {"min_games": DUO_MIN_GAMES})
+
+    # Most meetings at the same position; ties go to the closest series
+    rivalry = query("""
+        SELECT a."Name", b."Name", count(*), sum(a.won::INT)
+        FROM player_games a
+        JOIN player_games b ON b."gameID" = a."gameID" AND b."Position" = a."Position"
+                           AND b."Team" <> a."Team" AND b."Name" > a."Name"
+        GROUP BY a."Name", b."Name"
+        ORDER BY count(*) DESC, abs(2 * sum(a.won::INT) - count(*)), a."Name", b."Name"
+        LIMIT 1
+    """)
+
+    return {
+        "games": games,
+        "players": players,
+        "first_month": _month(first),
+        "last_month": _month(last),
+        "leader": leader,
+        "record": {"name": record[0], "points": record[1]} if record else None,
+        "duo": _duo(*duo[0]) if duo else None,
+        "rivalry": _rivalry(*rivalry[0]) if rivalry else None,
+    }

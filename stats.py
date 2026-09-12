@@ -73,6 +73,29 @@ def matchups(name, pos=None):
     return title, ['Opponent', 'Occurences', *STAT_HEADERS], _stats_by_label(name, labels_sql, pos)
 
 
+def teammate_combos(name):
+    title = name + "'s Stats When He Plays With"
+    # Label = everyone else on the player's team that game
+    labels_sql = """
+        SELECT m."gameID", string_agg(t."Name", ', ' ORDER BY t."Name") AS label
+        FROM mine m
+        JOIN player_stats t ON t."gameID" = m."gameID" AND t."Team" = m."Team" AND t."Name" <> m."Name"
+        GROUP BY m."gameID"
+    """
+    return title, ['Teammates', 'Occurences', *STAT_HEADERS], _stats_by_label(name, labels_sql)
+
+
+def single_teammate(name):
+    title = name + "'s Stats When He Plays With"
+    # One label per teammate per game, so every game with them counts once in their row
+    labels_sql = """
+        SELECT DISTINCT m."gameID", t."Name" AS label
+        FROM mine m
+        JOIN player_stats t ON t."gameID" = m."gameID" AND t."Team" = m."Team" AND t."Name" <> m."Name"
+    """
+    return title, ['Teammate', 'Occurences', *STAT_HEADERS], _stats_by_label(name, labels_sql)
+
+
 def career_highs(cat):
     if cat not in ALLOWED_CATS:
         raise ValueError(f"Unknown category: {cat}")

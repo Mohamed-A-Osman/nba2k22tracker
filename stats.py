@@ -40,6 +40,39 @@ def career_averages(pos=None):
     return title, ['Name', 'Games Played', *STAT_HEADERS], [_format_row(*row) for row in rows]
 
 
+def _stats_by_label(name, labels_sql, pos=None):
+    """The player's stats grouped by a label per game (e.g. who they matched up against).
+
+    labels_sql selects ("gameID", label) rows from `mine`, the player's own games.
+    Games without a label are left out.
+    """
+    position_filter = 'AND "Position" = $pos' if pos else ""
+    sql = f"""
+        WITH mine AS (SELECT * FROM player_games WHERE "Name" = $name {position_filter}),
+             labels AS ({labels_sql})
+        SELECT label, {STAT_COLUMNS}
+        FROM mine JOIN labels USING ("gameID")
+        GROUP BY label
+    """
+    params = {"name": name, "pos": pos} if pos else {"name": name}
+    return [_format_row(*row) for row in query(sql, params)]
+
+
+def matchups(name, pos=None):
+    if pos is None:
+        title = name + "'s Stats When Matched Up Against:"
+    else:
+        title = name + "'s " + pos + " Stats When Matched Up Against:"
+    # Opponent = the other player at the same position in that game
+    labels_sql = """
+        SELECT m."gameID", string_agg(o."Name", ', ' ORDER BY o."Name") AS label
+        FROM mine m
+        JOIN player_stats o ON o."gameID" = m."gameID" AND o."Position" = m."Position" AND o."Name" <> m."Name"
+        GROUP BY m."gameID"
+    """
+    return title, ['Opponent', 'Occurences', *STAT_HEADERS], _stats_by_label(name, labels_sql, pos)
+
+
 def career_highs(cat):
     if cat not in ALLOWED_CATS:
         raise ValueError(f"Unknown category: {cat}")

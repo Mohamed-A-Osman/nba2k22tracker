@@ -1,87 +1,76 @@
-from types import NoneType
-from flask import Flask, render_template, request
-from flask_sqlalchemy import SQLAlchemy
-#from flask_table import Table, Col
 import random
-from urls import remoteURL, localURL
+
+from flask import Flask, render_template, request
+
+import stats
 
 app = Flask(__name__)
-ENV = 'prod'
-if ENV == 'dev':
-    app.debug = True
-    app.config['SQLALCHEMY_DATABASE_URI'] = localURL
-else:
-    app.debug = False
-    app.config['SQLALCHEMY_DATABASE_URI'] = remoteURL
 
-db = SQLAlchemy(app)
-
-import methods as m
 
 @app.route('/')
 def home():
-    title, header, data = m.printCareerAvg()
     return render_template('landing.html')
+
 
 @app.route('/CareerAvg')
 def CareerAvg():
     pos = request.args.get('Position')
-    if pos == 'All Positions' or pos == None:
-        title, header, data = m.printCareerAvg()
-        pos = 'All Positions'
+    if pos in stats.POSITIONS:
+        title, header, data = stats.career_averages(pos)
     else:
-        title, header,data = m.printAvgbyPos(pos,True)
+        pos = 'All Positions'
+        title, header, data = stats.career_averages()
 
-    return render_template('Average.html', title=title, header = header,data=data, pos = pos)
+    return render_template('Average.html', title=title, header=header, data=data, pos=pos)
+
 
 @app.route('/Matchup')
 def Matchup():
+    names = stats.names()
     pos = request.args.get('Position')
     name = request.args.get('Name')
-    if(pos == None or name == None):
-        pos = "All Positions"
-        name = m.Names[random.randint(0, len(m.Names)-1)]
+    if name not in names:
         title = "Select A Player And Position"
-        return render_template('matchup.html', Names=m.Names, title=title, header = [], data=[], pos=pos, name=name)
-    else:
-        if(pos == "All Positions"):
-            title, header, data = m.printOpps(name)
-        else:
-            title, header, data = m.printOppsByPos(name, pos, True)
+        return render_template('matchup.html', Names=names, title=title, header=[], data=[],
+                               pos="All Positions", name=random.choice(names))
 
-        return render_template('matchup.html', Names=m.Names, title=title,header = header,data=data, pos = pos, name=name)
+    if pos in stats.POSITIONS:
+        title, header, data = stats.matchups(name, pos)
+    else:
+        pos = "All Positions"
+        title, header, data = stats.matchups(name)
+
+    return render_template('matchup.html', Names=names, title=title, header=header, data=data, pos=pos, name=name)
+
 
 @app.route('/Teammate')
 def Teammate():
+    names = stats.names()
     type = request.args.get('Type')
-    name = request.args.get('Name') 
-    if(type == None or name == None):
-        type = "All Combinations"
-        name = m.Names[random.randint(0, len(m.Names)-1)]
+    name = request.args.get('Name')
+    if type is None or name not in names:
         title = "Select A Player And A Teammate Output Type"
-        return render_template('teammate.html', Names=m.Names, title=title, header = [], data=[], type=type, name=name)
+        return render_template('teammate.html', Names=names, title=title, header=[], data=[],
+                               type="All Combinations", name=random.choice(names))
+
+    if type == 'Individual':
+        title, header, data = stats.single_teammate(name)
     else:
-        if(type == 'All Combinations'):
-            title, header, data = m.printTeammates(name)
-            return render_template('teammate.html', Names=m.Names, title=title, header = header, data=data, type=type, name=name)
-        else:
-            title, header, data = m.printSingleTeammate(name)
-            return render_template('teammate.html', Names=m.Names, title=title, header = header, data=data, type=type, name=name)
+        type = 'All Combinations'
+        title, header, data = stats.teammate_combos(name)
+
+    return render_template('teammate.html', Names=names, title=title, header=header, data=data, type=type, name=name)
 
 
 @app.route('/CareerHigh')
 def CareerHigh():
     cat = request.args.get('cat')
-    if cat == 'Points' or cat == None:
-        title, header, data = m.printCareerHighs("Points")
+    if cat not in stats.ALLOWED_CATS:
         cat = "Points"
-    else:
-        title, header,data = m.printCareerHighs(cat)
+    title, header, data = stats.career_highs(cat)
 
-    return render_template('CareerHigh.html', title=title, header = header,data=data, cat = cat)
+    return render_template('CareerHigh.html', title=title, header=header, data=data, cat=cat)
 
 
 if __name__ == '__main__':
     app.run()
-
-    

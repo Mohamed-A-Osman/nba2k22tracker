@@ -1,5 +1,6 @@
-"""Stat page calculations. Each page is a single SQL query over the player_games view."""
-from datetime import datetime
+"""Stat page calculations. Each stat page is a single SQL query over the player_games view."""
+from collections import namedtuple
+from datetime import datetime, timedelta
 
 from data import cached, query
 
@@ -21,9 +22,27 @@ STAT_COLUMNS = """
 """
 
 
-def _format_row(label, games, wins, *averages):
-    return [label, games, f"{wins}-{games - wins}", f"{100 * wins / games:.2f}",
-            *(f"{value:.2f}" for value in averages)]
+class StatLine(namedtuple("StatLine", "label games wins pts reb ast stl blk fouls tov "
+                                      "fgm fga fg_pct tpm tpa tp_pct")):
+    """One row of STAT_COLUMNS with its label: per-game averages and shooting percentages."""
+    __slots__ = ()
+
+    @property
+    def losses(self):
+        return self.games - self.wins
+
+    @property
+    def win_pct(self):
+        return 100 * self.wins / self.games
+
+
+def _lines(sql, params=None):
+    return [StatLine(*row) for row in query(sql, params)]
+
+
+def _format_row(line):
+    return [line.label, line.games, f"{line.wins}-{line.losses}", f"{line.win_pct:.2f}",
+            *(f"{value:.2f}" for value in line[3:])]
 
 
 @cached
@@ -32,19 +51,20 @@ def names():
 
 
 @cached
-def career_averages(pos=None):
+def average_lines(pos=None):
     if pos is None:
-        title = "CAREER AVERAGES"
-        sql = f'SELECT "Name", {STAT_COLUMNS} FROM player_games GROUP BY "Name" HAVING count(*) >= 10'
-        rows = query(sql)
-    else:
-        title = "AVERAGE STATS AT " + pos
-        sql = f'SELECT "Name", {STAT_COLUMNS} FROM player_games WHERE "Position" = $pos GROUP BY "Name"'
-        rows = query(sql, {"pos": pos})
-    return title, ['Name', 'Games Played', *STAT_HEADERS], [_format_row(*row) for row in rows]
+        return _lines(f'SELECT "Name", {STAT_COLUMNS} FROM player_games GROUP BY "Name" HAVING count(*) >= 10')
+    return _lines(f'SELECT "Name", {STAT_COLUMNS} FROM player_games WHERE "Position" = $pos GROUP BY "Name"',
+                  {"pos": pos})
 
 
-def _stats_by_label(name, labels_sql, pos=None):
+@cached
+def career_averages(pos=None):
+    title = "CAREER AVERAGES" if pos is None else "AVERAGE STATS AT " + pos
+    return title, ['Name', 'Games Played', *STAT_HEADERS], [_format_row(line) for line in average_lines(pos)]
+
+
+def _label_lines(name, labels_sql, pos=None):
     """The player's stats grouped by a label per game (e.g. who they matched up against).
 
     labels_sql selects ("gameID", label) rows from `mine`, the player's own games.
@@ -58,8 +78,44 @@ def _stats_by_label(name, labels_sql, pos=None):
         FROM mine JOIN labels USING ("gameID")
         GROUP BY label
     """
-    params = {"name": name, "pos": pos} if pos else {"name": name}
-    return [_format_row(*row) for row in query(sql, params)]
+    return _lines(sql, {"name": name, "pos": pos} if pos else {"name": name})
+
+
+# Opponent = the other player at the same position in that game
+MATCHUP_LABELS = """
+    SELECT m."gameID", string_agg(o."Name", ', ' ORDER BY o."Name") AS label
+    FROM mine m
+    JOIN player_stats o ON o."gameID" = m."gameID" AND o."Position" = m."Position" AND o."Name" <> m."Name"
+    GROUP BY m."gameID"
+"""
+# Label = everyone else on the player's team that game
+LINEUP_LABELS = """
+    SELECT m."gameID", string_agg(t."Name", ', ' ORDER BY t."Name") AS label
+    FROM mine m
+    JOIN player_stats t ON t."gameID" = m."gameID" AND t."Team" = m."Team" AND t."Name" <> m."Name"
+    GROUP BY m."gameID"
+"""
+# One label per teammate per game, so every game with them counts once in their row
+TEAMMATE_LABELS = """
+    SELECT DISTINCT m."gameID", t."Name" AS label
+    FROM mine m
+    JOIN player_stats t ON t."gameID" = m."gameID" AND t."Team" = m."Team" AND t."Name" <> m."Name"
+"""
+
+
+@cached
+def matchup_lines(name, pos=None):
+    return _label_lines(name, MATCHUP_LABELS, pos)
+
+
+@cached
+def lineup_lines(name):
+    return _label_lines(name, LINEUP_LABELS)
+
+
+@cached
+def teammate_lines(name):
+    return _label_lines(name, TEAMMATE_LABELS)
 
 
 @cached
@@ -68,39 +124,19 @@ def matchups(name, pos=None):
         title = name + "'s Stats When Matched Up Against:"
     else:
         title = name + "'s " + pos + " Stats When Matched Up Against:"
-    # Opponent = the other player at the same position in that game
-    labels_sql = """
-        SELECT m."gameID", string_agg(o."Name", ', ' ORDER BY o."Name") AS label
-        FROM mine m
-        JOIN player_stats o ON o."gameID" = m."gameID" AND o."Position" = m."Position" AND o."Name" <> m."Name"
-        GROUP BY m."gameID"
-    """
-    return title, ['Opponent', 'Occurences', *STAT_HEADERS], _stats_by_label(name, labels_sql, pos)
+    return title, ['Opponent', 'Occurences', *STAT_HEADERS], [_format_row(line) for line in matchup_lines(name, pos)]
 
 
 @cached
 def teammate_combos(name):
     title = name + "'s Stats When He Plays With"
-    # Label = everyone else on the player's team that game
-    labels_sql = """
-        SELECT m."gameID", string_agg(t."Name", ', ' ORDER BY t."Name") AS label
-        FROM mine m
-        JOIN player_stats t ON t."gameID" = m."gameID" AND t."Team" = m."Team" AND t."Name" <> m."Name"
-        GROUP BY m."gameID"
-    """
-    return title, ['Teammates', 'Occurences', *STAT_HEADERS], _stats_by_label(name, labels_sql)
+    return title, ['Teammates', 'Occurences', *STAT_HEADERS], [_format_row(line) for line in lineup_lines(name)]
 
 
 @cached
 def single_teammate(name):
     title = name + "'s Stats When He Plays With"
-    # One label per teammate per game, so every game with them counts once in their row
-    labels_sql = """
-        SELECT DISTINCT m."gameID", t."Name" AS label
-        FROM mine m
-        JOIN player_stats t ON t."gameID" = m."gameID" AND t."Team" = m."Team" AND t."Name" <> m."Name"
-    """
-    return title, ['Teammate', 'Occurences', *STAT_HEADERS], _stats_by_label(name, labels_sql)
+    return title, ['Teammate', 'Occurences', *STAT_HEADERS], [_format_row(line) for line in teammate_lines(name)]
 
 
 @cached
@@ -110,6 +146,138 @@ def career_highs(cat):
     rows = query(f'SELECT "Name", max("{cat}") FROM player_stats GROUP BY "Name"')
     return "CAREER HIGHS - " + cat.upper(), ['Name', cat], [[name, int(value)] for name, value in rows]
 
+
+@cached
+def record_holders(cat):
+    """Each player's best game in a category, best first: (name, value, game id).
+
+    When a player matched their best more than once, the first time counts.
+    """
+    if cat not in ALLOWED_CATS:
+        raise ValueError(f"Unknown category: {cat}")
+    rows = query(f"""
+        SELECT "Name", "{cat}", "gameID" FROM (
+            SELECT "Name", "{cat}", "gameID",
+                   row_number() OVER (PARTITION BY "Name"
+                                      ORDER BY "{cat}" DESC, regexp_extract("gameID", '(\\d{{14}})', 1)) AS pick
+            FROM player_stats)
+        WHERE pick = 1
+        ORDER BY "{cat}" DESC, "Name"
+    """)
+    return [(name, int(value), game_id) for name, value, game_id in rows]
+
+
+@cached
+def record_board():
+    """The top value in every category and everyone who reached it: (category, value, holders)."""
+    board = []
+    for cat in ALLOWED_CATS:
+        holders = record_holders(cat)
+        best = holders[0][1]
+        board.append((cat, best, [holder for holder in holders if holder[1] == best]))
+    return board
+
+
+# ---------------------------------------------------------------------------
+# Box scores for the game log
+
+Player = namedtuple("Player", "name position grade points rebounds assists steals blocks fouls turnovers "
+                              "fgm fga tpm tpa")
+Team = namedtuple("Team", "side points grade players")
+Game = namedtuple("Game", "id played teams winner")
+
+
+def _played(game_id):
+    """When the game was played, or None for the games entered later without their date."""
+    if not game_id.startswith("NBA2K22_"):
+        return None
+    return datetime.strptime(game_id[-14:], "%Y%m%d%H%M%S")
+
+
+def night_of(played):
+    """Sessions run past midnight, so anything before 6 am counts as the evening before."""
+    return (played - timedelta(hours=6)).date()
+
+
+def _grade(text):
+    # Two team grades were typed with stray spaces or dashes ("A -", "B- -")
+    cleaned = (text or "").replace(" ", "")
+    return cleaned[:2] if len(cleaned) > 2 else cleaned
+
+
+@cached
+def box_scores():
+    """Every game, newest first, with the undated games last."""
+    players = {}
+    for game_id, side, name, position, grade, *numbers in query("""
+        SELECT "gameID", "Team", "Name", "Position", "Grade", "Points", "Rebounds", "Assists", "Steals",
+               "Blocks", "Fouls", "Turnovers", "FGM", "FGA", "3PM", "3PA"
+        FROM player_stats
+        ORDER BY "Points" DESC, "Name"
+    """):
+        players.setdefault((game_id, side), []).append(
+            Player(name, position, _grade(grade), *(int(number) for number in numbers)))
+
+    teams = {}
+    for game_id, side, points, grade in query('SELECT "gameID", "Team", "Points", "Grade" FROM game_totals'):
+        teams.setdefault(game_id, {})[side] = Team(side, int(points), _grade(grade), players.get((game_id, side), []))
+
+    games = []
+    for game_id, sides in teams.items():
+        t1, t2 = sides["T1"], sides["T2"]
+        winner = "T1" if t1.points > t2.points else "T2" if t2.points > t1.points else None
+        games.append(Game(game_id, _played(game_id), (t1, t2), winner))
+    games.sort(key=lambda game: (game.played is not None, game.played or datetime.min, game.id), reverse=True)
+    return games
+
+
+@cached
+def _games_by_id():
+    return {game.id: game for game in box_scores()}
+
+
+def game(game_id):
+    return _games_by_id().get(game_id)
+
+
+def player_in(game, name):
+    """(team, player line) for a player in a game, or None if they didn't play."""
+    for team in game.teams:
+        for player in team.players:
+            if player.name == name:
+                return team, player
+    return None
+
+
+def find_games(name=None, pos=None, with_=(), vs=None, exact=False):
+    """Games for the game log's filters, newest first.
+
+    The other filters only apply with a player: pos is their position that game, with_ their
+    teammates (exact means exactly those teammates) and vs their same-position opponent.
+    """
+    if not name:
+        return box_scores()
+    wanted = set(with_)
+    found = []
+    for game in box_scores():
+        seat = player_in(game, name)
+        if seat is None:
+            continue
+        team, me = seat
+        if pos and me.position != pos:
+            continue
+        mates = {player.name for player in team.players if player.name != name}
+        if (mates != wanted) if (exact and wanted) else not wanted <= mates:
+            continue
+        if vs and not any(player.name == vs and player.position == me.position
+                          for side in game.teams for player in side.players if player.name != name):
+            continue
+        found.append(game)
+    return found
+
+
+# ---------------------------------------------------------------------------
+# Landing page
 
 # Two players need this many games on the same team to count as a duo
 DUO_MIN_GAMES = 15
@@ -140,15 +308,14 @@ def landing_highlights():
         FROM player_stats
     """)[0]
 
-    _, header, averages = career_averages()
-    ppg, win_pct, fg_pct = header.index('PPG'), header.index('W%'), header.index('FG%')
-    top = max(averages, key=lambda row: float(row[ppg]), default=None)
+    top = max(average_lines(), key=lambda line: line.pts, default=None)
     leader = None
     if top:
-        leader = {"name": top[0], "ppg": f"{float(top[ppg]):.1f}",
-                  "win_pct": f"{float(top[win_pct]):.1f}", "fg_pct": f"{float(top[fg_pct]):.1f}"}
+        leader = {"name": top.label, "ppg": f"{top.pts:.1f}", "win_pct": f"{top.win_pct:.1f}",
+                  "fg_pct": f"{top.fg_pct:.1f}"}
 
-    record = max(career_highs("Points")[2], key=lambda row: row[1], default=None)
+    points = record_holders("Points")
+    record = {"name": points[0][0], "points": points[0][1], "game_id": points[0][2]} if points else None
 
     duo = query("""
         SELECT a."Name", b."Name", count(*), sum(a.won::INT)
@@ -177,7 +344,7 @@ def landing_highlights():
         "first_month": _month(first),
         "last_month": _month(last),
         "leader": leader,
-        "record": {"name": record[0], "points": record[1]} if record else None,
+        "record": record,
         "duo": _duo(*duo[0]) if duo else None,
         "rivalry": _rivalry(*rivalry[0]) if rivalry else None,
     }

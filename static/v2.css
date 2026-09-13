@@ -916,21 +916,91 @@ input:focus-visible + .segment {
     margin-top: 40px;
 }
 
-/* The game's own box-score screenshot, the proof behind the numbers */
+/* The game's own box-score screenshot, the proof behind the numbers.
+   Up to 1400px it is a thumbnail under the score; wider, it sits beside the tables and stays in view. */
 .screenshot {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
-    max-width: 880px;
-    margin: 0 0 40px;
+    align-items: center;
+    gap: 16px;
+    margin: 0 0 32px;
+}
+
+.screenshot a {
+    flex: 0 0 auto;
 }
 
 .screenshot img {
     display: block;
-    width: 100%;
+    width: 176px;
     height: auto;
     border: 1px solid var(--line);
+    border-radius: 10px;
+    transition: border-color 150ms ease-out;
+}
+
+.screenshot a:hover img {
+    border-color: var(--glow-border);
+}
+
+@media (min-width: 1400px) {
+    .game-body.has-shot {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 440px;
+        align-items: start;
+        gap: 40px;
+    }
+
+    .game-body.has-shot .box-teams {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    .game-body.has-shot .screenshot {
+        grid-column: 2;
+        grid-row: 1;
+        position: sticky;
+        top: 24px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        margin: 0;
+    }
+
+    .game-body.has-shot .screenshot img {
+        width: 100%;
+        border-radius: 12px;
+    }
+}
+
+/* Full-size viewer; closes with Esc, the X or a click outside the image */
+.shot-viewer {
+    max-width: 96vw;
+    max-height: 94vh;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    overflow: visible;
+}
+
+.shot-viewer::backdrop {
+    background: rgba(8, 6, 12, 0.88);
+}
+
+.shot-viewer img {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: 96vw;
+    max-height: 90vh;
     border-radius: 12px;
+}
+
+.shot-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(14, 12, 20, 0.72);
+    color: #ffffff;
 }
 
 /* ---------- Career highs ---------- */

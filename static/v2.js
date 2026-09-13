@@ -99,6 +99,27 @@ document.querySelectorAll('[data-cat-switch]').forEach(function (link) {
     });
 });
 
+// Screenshot viewer: open the box score larger over the page instead of leaving the site
+document.querySelectorAll('[data-open-dialog]').forEach(function (link) {
+    var dialog = document.getElementById(link.dataset.openDialog);
+    if (!dialog || !dialog.showModal) {
+        return;
+    }
+    link.addEventListener('click', function (event) {
+        if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+            return;
+        }
+        event.preventDefault();
+        dialog.showModal();
+    });
+    // A click on the dimmed area around the image closes it
+    dialog.addEventListener('click', function (event) {
+        if (event.target === dialog) {
+            dialog.close();
+        }
+    });
+});
+
 // Lineups played once stay tucked away until asked for
 document.querySelectorAll('[data-show-once]').forEach(function (button) {
     button.addEventListener('click', function () {

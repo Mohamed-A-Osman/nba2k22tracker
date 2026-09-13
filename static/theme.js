@@ -1,5 +1,7 @@
 // Light/dark theme. Loaded in <head> so the saved theme applies before the page is drawn.
 (function () {
+    // Lets the stylesheet show controls that only work with JavaScript
+    document.documentElement.classList.add('js');
     var saved = null;
     try {
         saved = localStorage.getItem('theme');

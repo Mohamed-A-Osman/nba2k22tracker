@@ -1,0 +1,109 @@
+{% macro sort_icon() -%}
+<svg class="sort-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"></path></svg>
+{%- endmacro %}
+
+{# Stat table. rows: dicts with line (a StatLine), href (its game log) and optional once.
+   sorted_by: the column key the rows arrive sorted by, high to low. #}
+{% macro stat_table(rows, columns, label_header, caption, sorted_by='games', leaders={}, id='stats', once_count=0) %}
+<div class="table-block">
+  <div class="table-tools">
+    <span>{{ rows|length }} {{ 'row' if rows|length == 1 else 'rows' }}. Select a games number to open those games.<span class="swipe-hint"> Swipe the table sideways for more columns.</span></span>
+    <button type="button" class="text-button" data-toggle-extra aria-expanded="false" aria-controls="{{ id }}">More stats</button>
+  </div>
+  <div class="table-wrap" tabindex="0" role="region" aria-label="{{ caption }}">
+    <table class="stats" id="{{ id }}" data-sortable>
+      <caption class="visually-hidden">{{ caption }}. Column headers sort the table.</caption>
+      <thead>
+        <tr>
+          <th scope="col" class="label-col"{% if sorted_by == 'label' %} aria-sort="ascending"{% endif %}><button type="button" class="sort" data-type="text">{{ label_header }}{{ sort_icon() }}</button></th>
+          <th scope="col"{% if sorted_by == 'games' %} aria-sort="descending"{% endif %}><button type="button" class="sort">Games{{ sort_icon() }}</button></th>
+          <th scope="col"><button type="button" class="sort"><abbr title="Wins and losses">W–L</abbr>{{ sort_icon() }}</button></th>
+          {% for key, short, long, decimals, extra in columns %}
+          <th scope="col"{% if extra %} class="extra"{% endif %}{% if sorted_by == key %} aria-sort="descending"{% endif %}><button type="button" class="sort"><abbr title="{{ long }}">{{ short }}</abbr>{{ sort_icon() }}</button></th>
+          {% endfor %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
+        {% set line = row.line %}
+        <tr{% if row.once %} class="once"{% endif %}>
+          <td class="label-col" data-value="{{ line.label }}">{{ line.label }}</td>
+          <td data-value="{{ line.games }}"><a class="games-link" href="{{ row.href }}" aria-label="{{ line.games }} {{ 'game' if line.games == 1 else 'games' }}: {{ line.label }}">{{ line.games }}</a></td>
+          <td data-value="{{ line.wins }}">{{ line.wins }}–{{ line.losses }}</td>
+          {% for key, short, long, decimals, extra in columns %}
+          {% set value = line.win_pct if key == 'win_pct' else line[key] %}
+          <td data-value="{{ value }}" class="{{ 'extra' if extra }}{{ ' leader' if leaders.get(key) is not none and leaders.get(key) == value }}">{{ '%.*f'|format(decimals, value) }}</td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% if once_count %}
+  <button type="button" class="text-button js-only" data-show-once>Show the {{ once_count }} {{ 'lineup' if once_count == 1 else 'lineups' }} played only once</button>
+  {% endif %}
+</div>
+{% endmacro %}
+
+{# Position radios for filter forms. player_filter marks them as belonging to a chosen player. #}
+{% macro position_filter(pos, player_filter=False) %}
+<fieldset class="segmented">
+  <legend>Position</legend>
+  <div class="segments">
+    <input type="radio" id="pos-all" name="Position" value=""{% if player_filter %} data-player-filter{% endif %}{% if not pos %} checked{% endif %}>
+    <label class="segment" for="pos-all">All</label>
+    {% for p in positions %}
+    <input type="radio" id="pos-{{ p }}" name="Position" value="{{ p }}"{% if player_filter %} data-player-filter{% endif %}{% if p == pos %} checked{% endif %}>
+    <label class="segment" for="pos-{{ p }}">{{ p }}</label>
+    {% endfor %}
+  </div>
+</fieldset>
+{% endmacro %}
+
+{% macro player_select(names, name, label='Player', empty='Pick a player') %}
+<div class="field">
+  <label class="field-label" for="f-name">{{ label }}</label>
+  <select class="select" id="f-name" name="Name">
+    <option value="">{{ empty }}</option>
+    {% for n in names %}
+    <option value="{{ n }}"{% if n == name %} selected{% endif %}>{{ n }}</option>
+    {% endfor %}
+  </select>
+</div>
+{% endmacro %}
+
+{% macro player_chips(names, endpoint) %}
+<ul class="chips">
+  {% for n in names %}
+  <li><a class="chip" href="{{ url_for(endpoint, Name=n, **kwargs) }}">{{ n }}</a></li>
+  {% endfor %}
+</ul>
+{% endmacro %}
+
+{# One game in the game log: date or time, final score, each side's top scorer,
+   and the chosen player's line when the log is filtered to one player. #}
+{% macro game_row(game, when, me=None) %}
+{% set t1, t2 = game.teams %}
+<li>
+  <a class="game-row" href="{{ url_for('v2.game', game_id=game.id) }}">
+    <span class="game-time">{{ when }}</span>
+    <span class="score" aria-label="T1 {{ t1.points }}, T2 {{ t2.points }}">
+      <span class="side">T1</span>
+      <span class="pts{% if game.winner == 'T1' %} win{% endif %}">{{ t1.points }}</span>
+      <span class="dash">–</span>
+      <span class="pts{% if game.winner == 'T2' %} win{% endif %}">{{ t2.points }}</span>
+      <span class="side">T2</span>
+    </span>
+    <span class="tops">
+      {% for team in game.teams %}
+      {% set top = team.players[0] if team.players else none %}
+      <span{% if game.winner == team.side %} class="won"{% endif %}>{{ team.side }}{% if game.winner == team.side %} won{% endif %}{% if top %}: {{ top.name }} {{ top.points }}{% endif %}</span>
+      {% endfor %}
+    </span>
+    {% if me %}
+    <span class="my-line"><span class="{{ 'result-won' if me.won else 'result-lost' }}">{{ 'Won' if me.won else 'Lost' }}</span> · <strong>{{ me.player.points }} pts</strong>, {{ me.player.rebounds }} reb, {{ me.player.assists }} ast · {{ me.player.position }}</span>
+    {% endif %}
+    <svg class="row-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg>
+  </a>
+</li>
+{% endmacro %}

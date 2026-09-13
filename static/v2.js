@@ -76,6 +76,29 @@ document.querySelectorAll('[data-toggle-extra]').forEach(function (button) {
     });
 });
 
+// Career highs: switch the stat in place; the address still updates so the view can be shared
+document.querySelectorAll('[data-cat-switch]').forEach(function (link) {
+    link.addEventListener('click', function (event) {
+        // Let new-tab and new-window clicks behave like normal links
+        if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+            return;
+        }
+        event.preventDefault();
+        var cat = link.dataset.catSwitch;
+        document.querySelectorAll('[data-cat-panel]').forEach(function (panel) {
+            panel.hidden = panel.dataset.catPanel !== cat;
+        });
+        document.querySelectorAll('[data-cat-switch]').forEach(function (other) {
+            if (other === link) {
+                other.setAttribute('aria-current', 'page');
+            } else {
+                other.removeAttribute('aria-current');
+            }
+        });
+        history.replaceState(null, '', link.href);
+    });
+});
+
 // Lineups played once stay tucked away until asked for
 document.querySelectorAll('[data-show-once]').forEach(function (button) {
     button.addEventListener('click', function () {

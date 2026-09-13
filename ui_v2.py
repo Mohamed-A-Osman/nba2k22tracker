@@ -203,13 +203,19 @@ def highs():
     cat = _pick(request.args.get('cat'), stats.ALLOWED_CATS) or 'Points'
     board = [(board_cat, value, [(holder, game_id, _game_date(game_id)) for holder, _, game_id in holders])
              for board_cat, value, holders in stats.record_board()]
+    # Every category's ranking goes in the page so the stat buttons switch without a reload
+    return render_template('v2/highs.html', cat=cat, cats=stats.ALLOWED_CATS, cat_names=CAT_NAMES,
+                           board=board, rankings={c: _ranked(c) for c in stats.ALLOWED_CATS})
+
+
+def _ranked(cat):
+    """Each player's best game in a category, ranked, with ties sharing a rank."""
     ranked, rank, previous = [], 0, None
     for position, (holder, value, game_id) in enumerate(stats.record_holders(cat), start=1):
         if value != previous:
             rank, previous = position, value
         ranked.append((rank, holder, value, game_id, _game_date(game_id)))
-    return render_template('v2/highs.html', cat=cat, cats=stats.ALLOWED_CATS, cat_names=CAT_NAMES,
-                           board=board, ranked=ranked)
+    return ranked
 
 
 @bp.route('/Upload', methods=['GET', 'POST'])

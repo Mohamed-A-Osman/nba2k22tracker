@@ -1,0 +1,30 @@
+{% extends 'v2/base.html' %}
+{% from 'v2/_macros.html' import stat_table, position_filter, player_select, player_chips with context %}
+{% block title %}{{ name ~ ' matchups' if name else 'Matchups' }} · 2K22 Stat Tracker{% endblock %}
+{% block main %}
+<div class="page-head">
+  <h1 class="page-title display">Matchups</h1>
+  {% if name %}
+  <p class="answer">
+    <strong>{{ name }}</strong> has faced {{ rows|length }} {{ 'player' if rows|length == 1 else 'players' }} at the same position{% if pos %} while playing {{ pos }}{% endif %}.
+    {% if best %}Best record: <strong>{{ best.wins }}–{{ best.losses }}</strong> against {{ best.label }}. Toughest: <strong>{{ worst.wins }}–{{ worst.losses }}</strong> against {{ worst.label }}.{% endif %}
+  </p>
+  <p class="note">Each row is {{ name }}'s own line in games against that opponent.{% if best %} Best and toughest need {{ min_games }} or more games.{% endif %}</p>
+  {% else %}
+  <p class="answer">How a player does against each opponent who played the same position.</p>
+  {% endif %}
+</div>
+
+<form class="filters" action="{{ url_for('v2.matchups') }}" method="get" data-autosubmit>
+  {{ player_select(names, name) }}
+  {{ position_filter(pos) }}
+  <button class="button apply" type="submit">Apply</button>
+</form>
+
+{% if name %}
+{{ stat_table(rows, columns, 'Opponent', name ~ ' against each opponent', id='matchups') }}
+{% else %}
+<h2 class="section-title">Pick a player</h2>
+{{ player_chips(names, 'v2.matchups', Position=pos) }}
+{% endif %}
+{% endblock %}

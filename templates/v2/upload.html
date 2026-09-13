@@ -1,0 +1,22 @@
+{% extends 'v2/base.html' %}
+{% block title %}Upload a box score · 2K22 Stat Tracker{% endblock %}
+{% block main %}
+<div class="page-head">
+  <h1 class="page-title display">Upload a box score</h1>
+  <p class="answer">Soon you'll be able to upload a screenshot of a game's box score and have its stats read automatically. That reading (OCR) isn't set up yet, so for now nothing you upload is saved.</p>
+</div>
+
+{% if message %}
+<p class="status" role="status">{{ message }}</p>
+{% endif %}
+
+<form class="upload-form" action="{{ url_for('v2.upload') }}" method="post" enctype="multipart/form-data">
+  <label class="dropzone">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"></path></svg>
+    <strong>Choose a screenshot</strong>
+    <span>PNG or JPG, up to 5 MB</span>
+    <input type="file" name="screenshot" accept="image/*" required>
+  </label>
+  <button class="button" type="submit">Upload</button>
+</form>
+{% endblock %}

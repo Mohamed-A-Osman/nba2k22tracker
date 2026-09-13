@@ -1,0 +1,59 @@
+{% extends 'v2/base.html' %}
+{% block title %}Career highs · 2K22 Stat Tracker{% endblock %}
+{% block main %}
+{% set top_value = ranked[0][2] if ranked else none %}
+{% set top_holders = ranked|selectattr('2', 'equalto', top_value)|list %}
+<div class="page-head">
+  <h1 class="page-title display">Career highs</h1>
+  <p class="answer">The best single game anyone has had in each stat. Every record opens the game it happened in.</p>
+</div>
+
+<ul class="records" aria-label="Records">
+  {% for board_cat, value, holders in board %}
+  <li class="record">
+    <span class="record-cat">{{ board_cat }}</span>
+    <span class="record-value">{{ value }}</span>
+    <span class="record-holders">
+      {% for holder, game_id, when in holders %}
+      <span><strong>{{ holder }}</strong> · <a class="text-link" href="{{ url_for('v2.game', game_id=game_id) }}" aria-label="{{ holder }}'s {{ cat_names[board_cat] }} record game, {{ when }}">{{ when }}</a></span>
+      {% endfor %}
+    </span>
+  </li>
+  {% endfor %}
+</ul>
+
+<div class="block-head">
+  <h2 class="section-title">Everyone's best: {{ cat_names[cat] }}</h2>
+</div>
+<nav class="filters" aria-label="Stat">
+  <div class="segments">
+    {% for c in cats %}
+    <a class="segment" href="{{ url_for('v2.highs', cat=c) }}"{% if c == cat %} aria-current="page"{% endif %}>{{ c }}</a>
+    {% endfor %}
+  </div>
+</nav>
+
+<div class="table-wrap" tabindex="0" role="region" aria-label="Everyone's best {{ cat_names[cat] }}">
+  <table class="stats">
+    <caption class="visually-hidden">Each player's best single game for {{ cat_names[cat] }}</caption>
+    <thead>
+      <tr>
+        <th scope="col">Rank</th>
+        <th scope="col" class="label-col">Player</th>
+        <th scope="col">{{ cat }}</th>
+        <th scope="col">Game</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for rank, holder, value, game_id, when in ranked %}
+      <tr>
+        <td class="rank">{{ rank }}</td>
+        <td class="label-col">{{ holder }}</td>
+        <td{% if value == top_value %} class="leader"{% endif %}>{{ value }}</td>
+        <td><a class="games-link" href="{{ url_for('v2.game', game_id=game_id) }}">{{ when }}</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

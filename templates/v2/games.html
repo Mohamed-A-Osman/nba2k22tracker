@@ -1,0 +1,67 @@
+{% extends 'v2/base.html' %}
+{% from 'v2/_macros.html' import game_row, position_filter, player_select with context %}
+{% block title %}Game log · 2K22 Stat Tracker{% endblock %}
+{% block main %}
+<div class="page-head">
+  <h1 class="page-title display">Game log</h1>
+  <p class="answer">
+    {% if name %}
+    <strong>{{ name }}</strong>{% if pos %} at {{ pos }}{% endif %}{% if with_ %} with {{ with_|join(', ') }}{% if exact %} and nobody else{% endif %}{% endif %}{% if vs %} against {{ vs }}{% endif %}:
+    {{ count }} {{ 'game' if count == 1 else 'games' }}{% if count %}, {{ wins }}–{{ count - wins }}{% endif %}.
+    {% else %}
+    All {{ count }} games, newest first. Pick a player to see their line in every game.
+    {% endif %}
+  </p>
+</div>
+
+<form class="filters" action="{{ url_for('v2.games') }}" method="get" data-autosubmit>
+  {{ player_select(names, name, empty='All players') }}
+  {% if name %}
+  {{ position_filter(pos, player_filter=True) }}
+  {% if lineup %}
+  {% for mate in with_ %}<input type="hidden" name="With" value="{{ mate }}" data-player-filter>{% endfor %}
+  {% if exact %}<input type="hidden" name="Lineup" value="exact" data-player-filter>{% endif %}
+  <p class="note">Lineup: <strong>{{ with_|join(', ') }}</strong>{% if exact %}, and nobody else{% endif %} · <a class="text-link" href="{{ clear_lineup_url }}">Remove</a></p>
+  {% else %}
+  <div class="field">
+    <label class="field-label" for="f-with">With teammate</label>
+    <select class="select" id="f-with" name="With" data-player-filter>
+      <option value="">Anyone</option>
+      {% for n in names if n != name %}
+      <option value="{{ n }}"{% if n in with_ %} selected{% endif %}>{{ n }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  {% endif %}
+  <div class="field">
+    <label class="field-label" for="f-vs">Against (same position)</label>
+    <select class="select" id="f-vs" name="Vs" data-player-filter>
+      <option value="">Anyone</option>
+      {% for n in names if n != name %}
+      <option value="{{ n }}"{% if n == vs %} selected{% endif %}>{{ n }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  {% endif %}
+  <button class="button apply" type="submit">Apply</button>
+</form>
+
+{% for night, games in groups %}
+<section class="night" aria-labelledby="night-{{ loop.index }}">
+  <div class="night-head">
+    <h2 class="section-title" id="night-{{ loop.index }}">{{ night|day if night else 'Date not recorded' }}</h2>
+    <span class="count">{{ games|length }} {{ 'game' if games|length == 1 else 'games' }}</span>
+  </div>
+  {% if not night %}
+  <p class="note">These games were entered on June 16, 2022 without the date they were played.</p>
+  {% endif %}
+  <ol class="game-list">
+    {% for game in games %}
+    {{ game_row(game, game.played|clock if game.played else 'No date', seats.get(game.id)) }}
+    {% endfor %}
+  </ol>
+</section>
+{% else %}
+<p class="empty">No games match these filters. <a class="text-link" href="{{ url_for('v2.games', Name=name) }}">Show all of {{ name }}'s games</a></p>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,89 @@
+{% extends 'v2/base.html' %}
+{% set when = game.played|night|day if game.played else 'Date not recorded' %}
+{% block title %}Game of {{ when }} · 2K22 Stat Tracker{% endblock %}
+{% block main %}
+<div class="page-head">
+  <h1 class="page-title display">{{ when }}</h1>
+  <p class="note">
+    {% if game.played %}Recorded {{ game.played|day }} at {{ game.played|clock }}.{% else %}This game was entered on June 16, 2022 without the date it was played.{% endif %}
+    <a class="text-link" href="{{ url_for('v2.games') }}">Back to the game log</a>
+  </p>
+</div>
+
+{% set t1, t2 = game.teams %}
+<div class="final" role="group" aria-label="Final score">
+  {% for team in game.teams %}
+  <div class="final-team">
+    <span class="side">{{ team.side }}</span>
+    <span class="pts display{% if game.winner == team.side %} win{% endif %}">{{ team.points }}</span>
+  </div>
+  {% endfor %}
+  {% if game.winner %}
+  <p class="final-margin">{{ game.winner }} won by {{ (t1.points - t2.points)|abs }}</p>
+  {% endif %}
+</div>
+
+<div class="box-teams">
+  {% for team in game.teams %}
+  <section aria-labelledby="team-{{ team.side }}">
+    <div class="team-head">
+      <h2 class="section-title" id="team-{{ team.side }}">{{ team.side }}{% if game.winner == team.side %} · won{% endif %}</h2>
+      <span class="meta">{{ team.points }} points · team grade {{ team.grade }}</span>
+    </div>
+    <div class="table-wrap" tabindex="0" role="region" aria-label="{{ team.side }} box score">
+      <table class="stats">
+        <caption class="visually-hidden">{{ team.side }} box score</caption>
+        <thead>
+          <tr>
+            <th scope="col" class="label-col">Player</th>
+            <th scope="col"><abbr title="Position">Pos</abbr></th>
+            <th scope="col">Grade</th>
+            <th scope="col"><abbr title="Points">PTS</abbr></th>
+            <th scope="col"><abbr title="Rebounds">REB</abbr></th>
+            <th scope="col"><abbr title="Assists">AST</abbr></th>
+            <th scope="col"><abbr title="Steals">STL</abbr></th>
+            <th scope="col"><abbr title="Blocks">BLK</abbr></th>
+            <th scope="col"><abbr title="Turnovers">TO</abbr></th>
+            <th scope="col"><abbr title="Fouls">FLS</abbr></th>
+            <th scope="col"><abbr title="Field goals made and attempted">FG</abbr></th>
+            <th scope="col"><abbr title="Threes made and attempted">3P</abbr></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in team.players %}
+          <tr>
+            <td class="label-col"><a class="games-link" href="{{ url_for('v2.games', Name=p.name) }}">{{ p.name }}</a></td>
+            <td>{{ p.position }}</td>
+            <td>{{ p.grade }}</td>
+            <td>{{ p.points }}</td>
+            <td>{{ p.rebounds }}</td>
+            <td>{{ p.assists }}</td>
+            <td>{{ p.steals }}</td>
+            <td>{{ p.blocks }}</td>
+            <td>{{ p.turnovers }}</td>
+            <td>{{ p.fouls }}</td>
+            <td>{{ p.fgm }}–{{ p.fga }}</td>
+            <td>{{ p.tpm }}–{{ p.tpa }}</td>
+          </tr>
+          {% endfor %}
+          {% if unlisted[team.side] > 0 %}
+          <tr>
+            <td class="label-col">Players outside the group</td>
+            <td></td>
+            <td></td>
+            <td>{{ unlisted[team.side] }}</td>
+            <td colspan="8"></td>
+          </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+  {% endfor %}
+</div>
+
+<nav class="game-nav" aria-label="Other games">
+  {% if newer %}<a class="text-link" href="{{ url_for('v2.game', game_id=newer.id) }}">Newer game</a>{% else %}<span></span>{% endif %}
+  {% if older %}<a class="text-link" href="{{ url_for('v2.game', game_id=older.id) }}">Older game</a>{% endif %}
+</nav>
+{% endblock %}

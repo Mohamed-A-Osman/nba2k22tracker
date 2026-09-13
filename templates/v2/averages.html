@@ -1,0 +1,22 @@
+{% extends 'v2/base.html' %}
+{% from 'v2/_macros.html' import stat_table, position_filter with context %}
+{% block title %}Career averages · 2K22 Stat Tracker{% endblock %}
+{% block main %}
+<div class="page-head">
+  <h1 class="page-title display">Career averages</h1>
+  {% if leader %}
+  <p class="answer"><strong>{{ leader.label }}</strong> leads {{ 'at ' ~ pos if pos else 'the group' }} with {{ '%.2f'|format(leader.pts) }} points a game.</p>
+  {% endif %}
+  <p class="note">
+    {% if pos %}Everyone who played {{ pos }}, counting only their games there.{% else %}Players with 10 or more games. Pick a position to include everyone who played it.{% endif %}
+    The best in each column is marked in gold.
+  </p>
+</div>
+
+<form class="filters" action="{{ url_for('v2.averages') }}" method="get" data-autosubmit>
+  {{ position_filter(pos) }}
+  <button class="button apply" type="submit">Apply</button>
+</form>
+
+{{ stat_table(rows, columns, 'Player', 'Career averages' ~ (' at ' ~ pos if pos else ''), sorted_by='pts', leaders=leaders) }}
+{% endblock %}

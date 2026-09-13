@@ -1,0 +1,43 @@
+{% extends 'v2/base.html' %}
+{% from 'v2/_macros.html' import stat_table, player_select, player_chips %}
+{% block title %}{{ name ~ ' teammates' if name else 'Teammates' }} · 2K22 Stat Tracker{% endblock %}
+{% block main %}
+<div class="page-head">
+  <h1 class="page-title display">Teammates</h1>
+  {% if name and view == 'lineups' %}
+  <p class="answer"><strong>{{ name }}</strong> has played in {{ rows|length }} different {{ 'lineup' if rows|length == 1 else 'lineups' }}{% if once_count %}; {{ once_count }} of them only once{% endif %}.</p>
+  <p class="note">A lineup is everyone else from the group on {{ name }}'s team. Each row is {{ name }}'s own line in those games.</p>
+  {% elif name %}
+  <p class="answer">
+    <strong>{{ name }}</strong> has shared a team with {{ rows|length }} {{ 'player' if rows|length == 1 else 'players' }}.
+    {% if best %}Wins most with {{ best.label }} (<strong>{{ best.wins }}–{{ best.losses }}</strong>), least with {{ worst.label }} (<strong>{{ worst.wins }}–{{ worst.losses }}</strong>).{% endif %}
+  </p>
+  <p class="note">Each row is {{ name }}'s own line in games with that teammate.{% if best %} Most and least need {{ min_games }} or more games together.{% endif %}</p>
+  {% else %}
+  <p class="answer">Who a player wins with, one teammate at a time or as whole lineups.</p>
+  {% endif %}
+</div>
+
+<form class="filters" action="{{ url_for('v2.teammates') }}" method="get" data-autosubmit>
+  {{ player_select(names, name) }}
+  <fieldset class="segmented">
+    <legend>Show</legend>
+    <div class="segments">
+      <input type="radio" id="type-individual" name="Type" value="Individual"{% if view == 'teammates' %} checked{% endif %}>
+      <label class="segment" for="type-individual">Teammates</label>
+      <input type="radio" id="type-lineups" name="Type" value="All Combinations"{% if view == 'lineups' %} checked{% endif %}>
+      <label class="segment" for="type-lineups">Lineups</label>
+    </div>
+  </fieldset>
+  <button class="button apply" type="submit">Apply</button>
+</form>
+
+{% if name %}
+{{ stat_table(rows, columns, 'Lineup' if view == 'lineups' else 'Teammate',
+              name ~ (' in each lineup' if view == 'lineups' else ' with each teammate'),
+              id='teammates', once_count=once_count) }}
+{% else %}
+<h2 class="section-title">Pick a player</h2>
+{{ player_chips(names, 'v2.teammates', Type=('All Combinations' if view == 'lineups' else none)) }}
+{% endif %}
+{% endblock %}

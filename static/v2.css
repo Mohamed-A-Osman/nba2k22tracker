@@ -1048,13 +1048,18 @@ input:focus-visible + .segment {
     stroke-width: 2.5;
 }
 
-.spot circle {
+/* Invisible tap area around each spot, larger than the dot */
+.spot-hit {
+    fill: transparent;
+}
+
+.spot-dot {
     fill: var(--button);
     transition: fill 150ms ease-out;
 }
 
-.spot:hover circle,
-.spot:focus circle {
+.spot:hover .spot-dot,
+.spot:focus .spot-dot {
     fill: var(--highlight);
 }
 
@@ -1247,8 +1252,44 @@ input:focus-visible + .segment {
         padding-top: 24px;
     }
 
+    /* The court shrinks to about 60% on phones, so its dots and labels grow to compensate */
+    .spot-dot {
+        r: 22px;
+    }
+
+    .spot-pos {
+        font-size: 20px;
+        transform: translateY(2px);
+    }
+
+    .spot-name {
+        font-size: 30px;
+        transform: translateY(6px);
+    }
+
     .spot-meta {
-        font-size: 18px;
+        font-size: 25px;
+        transform: translateY(16px);
+    }
+
+    .spot-left .spot-name {
+        text-anchor: start;
+        transform: translate(-22px, 6px);
+    }
+
+    .spot-left .spot-meta {
+        text-anchor: start;
+        transform: translate(-22px, 16px);
+    }
+
+    .spot-right .spot-name {
+        text-anchor: end;
+        transform: translate(22px, 6px);
+    }
+
+    .spot-right .spot-meta {
+        text-anchor: end;
+        transform: translate(22px, 16px);
     }
 
     .actions .button {

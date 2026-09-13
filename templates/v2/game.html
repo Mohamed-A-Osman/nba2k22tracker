@@ -61,7 +61,7 @@
         <tbody>
           {% for p in team.players %}
           <tr>
-            <td class="label-col"><a class="games-link" href="{{ url_for('v2.games', Name=p.name) }}">{{ p.name }}</a></td>
+            <td class="label-col"><a class="games-link tag" href="{{ url_for('v2.games', Name=p.name) }}">{{ p.name }}</a></td>
             <td>{{ p.points }}</td>
             <td>{{ p.rebounds }}</td>
             <td>{{ p.assists }}</td>

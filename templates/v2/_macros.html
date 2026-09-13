@@ -27,7 +27,7 @@
         {% for row in rows %}
         {% set line = row.line %}
         <tr{% if row.once %} class="once"{% endif %}>
-          <td class="label-col" data-value="{{ line.label }}">{{ line.label }}</td>
+          <td class="label-col" data-value="{{ line.label }}">{% for part in line.label.split(', ') %}<span class="tag">{{ part }}</span>{% if not loop.last %}, {% endif %}{% endfor %}</td>
           <td data-value="{{ line.games }}"><a class="games-link" href="{{ row.href }}" aria-label="{{ line.games }} {{ 'game' if line.games == 1 else 'games' }}: {{ line.label }}">{{ line.games }}</a></td>
           <td data-value="{{ line.wins }}">{{ line.wins }}–{{ line.losses }}</td>
           {% for key, short, long, decimals, extra in columns %}
@@ -97,7 +97,7 @@
     <span class="tops">
       {% for team in game.teams %}
       {% set top = team.players[0] if team.players else none %}
-      <span{% if game.winner == team.side %} class="won"{% endif %}>{{ team.side }}{% if game.winner == team.side %} won{% endif %}{% if top %}: {{ top.name }} {{ top.points }}{% endif %}</span>
+      <span{% if game.winner == team.side %} class="won"{% endif %}>{{ team.side }}{% if game.winner == team.side %} won{% endif %}{% if top %}: <span class="tag">{{ top.name }}</span> {{ top.points }}{% endif %}</span>
       {% endfor %}
     </span>
     {% if me %}

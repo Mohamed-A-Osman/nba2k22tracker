@@ -48,7 +48,7 @@
       <tr>
         <td class="rank">{{ rank }}</td>
         <td class="label-col">
-          {{ holder }}
+          <span class="tag">{{ holder }}</span>
           <a class="games-link narrow-only" href="{{ url_for('v2.game', game_id=game_id) }}">{{ when }}</a>
         </td>
         <td{% if value == top_value %} class="leader"{% endif %}>{{ value }}</td>

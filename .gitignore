@@ -4,3 +4,7 @@ urls.py
 .venv/
 data/
 .aws-sam/
+
+.impeccable/review/
+.impeccable/*.log
+.impeccable/questions/

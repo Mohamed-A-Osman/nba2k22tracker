@@ -51,6 +51,14 @@ def names():
 
 
 @cached
+def positions_of(name):
+    """Positions a player has played, in the usual PG to C order."""
+    played = {row[0] for row in query('SELECT DISTINCT "Position" FROM player_stats WHERE "Name" = $name',
+                                      {"name": name})}
+    return [pos for pos in POSITIONS if pos in played]
+
+
+@cached
 def average_lines(pos=None):
     if pos is None:
         return _lines(f'SELECT "Name", {STAT_COLUMNS} FROM player_games GROUP BY "Name" HAVING count(*) >= 10')

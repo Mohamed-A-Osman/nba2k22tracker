@@ -20,15 +20,15 @@
 
 <form class="filters" action="{{ url_for('v2.teammates') }}" method="get" data-autosubmit>
   {{ player_select(names, name) }}
-  <fieldset class="segmented">
-    <legend>Show</legend>
+  <div class="segmented" role="radiogroup" aria-labelledby="show-label">
+    <span class="field-label" id="show-label">Show</span>
     <div class="segments">
       <input type="radio" id="type-individual" name="Type" value="Individual"{% if view == 'teammates' %} checked{% endif %}>
       <label class="segment" for="type-individual">Teammates</label>
       <input type="radio" id="type-lineups" name="Type" value="All Combinations"{% if view == 'lineups' %} checked{% endif %}>
       <label class="segment" for="type-lineups">Lineups</label>
     </div>
-  </fieldset>
+  </div>
   <button class="button apply" type="submit">Apply</button>
 </form>
 

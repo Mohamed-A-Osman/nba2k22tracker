@@ -25,19 +25,26 @@
 
 <div class="box-teams">
   {% for team in game.teams %}
+  {% if not loop.first %}
+  <div class="half-court" aria-hidden="true">
+    <svg viewBox="0 0 64 64" fill="none" stroke-width="2"><circle cx="32" cy="32" r="28"></circle></svg>
+  </div>
+  {% endif %}
   <section aria-labelledby="team-{{ team.side }}">
     <div class="team-head">
       <h2 class="section-title" id="team-{{ team.side }}">{{ team.side }}{% if game.winner == team.side %} · won{% endif %}</h2>
       <span class="meta">{{ team.points }} points · team grade {{ team.grade }}</span>
     </div>
     <div class="table-wrap" tabindex="0" role="region" aria-label="{{ team.side }} box score">
-      <table class="stats">
+      <table class="stats box-table">
         <caption class="visually-hidden">{{ team.side }} box score</caption>
+        <colgroup>
+          <col class="col-player">
+          <col span="11">
+        </colgroup>
         <thead>
           <tr>
             <th scope="col" class="label-col">Player</th>
-            <th scope="col"><abbr title="Position">Pos</abbr></th>
-            <th scope="col">Grade</th>
             <th scope="col"><abbr title="Points">PTS</abbr></th>
             <th scope="col"><abbr title="Rebounds">REB</abbr></th>
             <th scope="col"><abbr title="Assists">AST</abbr></th>
@@ -47,14 +54,14 @@
             <th scope="col"><abbr title="Fouls">FLS</abbr></th>
             <th scope="col"><abbr title="Field goals made and attempted">FG</abbr></th>
             <th scope="col"><abbr title="Threes made and attempted">3P</abbr></th>
+            <th scope="col"><abbr title="Position">Pos</abbr></th>
+            <th scope="col">Grade</th>
           </tr>
         </thead>
         <tbody>
           {% for p in team.players %}
           <tr>
             <td class="label-col"><a class="games-link" href="{{ url_for('v2.games', Name=p.name) }}">{{ p.name }}</a></td>
-            <td>{{ p.position }}</td>
-            <td>{{ p.grade }}</td>
             <td>{{ p.points }}</td>
             <td>{{ p.rebounds }}</td>
             <td>{{ p.assists }}</td>
@@ -64,15 +71,15 @@
             <td>{{ p.fouls }}</td>
             <td>{{ p.fgm }}–{{ p.fga }}</td>
             <td>{{ p.tpm }}–{{ p.tpa }}</td>
+            <td>{{ p.position }}</td>
+            <td>{{ p.grade }}</td>
           </tr>
           {% endfor %}
           {% if unlisted[team.side] > 0 %}
           <tr>
             <td class="label-col">Players outside the group</td>
-            <td></td>
-            <td></td>
             <td>{{ unlisted[team.side] }}</td>
-            <td colspan="8"></td>
+            <td colspan="10"></td>
           </tr>
           {% endif %}
         </tbody>

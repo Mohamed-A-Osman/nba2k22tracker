@@ -46,18 +46,18 @@
 {% endmacro %}
 
 {# Position radios for filter forms. player_filter marks them as belonging to a chosen player. #}
-{% macro position_filter(pos, player_filter=False) %}
-<fieldset class="segmented">
-  <legend>Position</legend>
+{% macro position_filter(pos, player_filter=False, choices=none) %}
+<div class="segmented" role="radiogroup" aria-labelledby="pos-label">
+  <span class="field-label" id="pos-label">Position</span>
   <div class="segments">
     <input type="radio" id="pos-all" name="Position" value=""{% if player_filter %} data-player-filter{% endif %}{% if not pos %} checked{% endif %}>
     <label class="segment" for="pos-all">All</label>
-    {% for p in positions %}
+    {% for p in choices or positions %}
     <input type="radio" id="pos-{{ p }}" name="Position" value="{{ p }}"{% if player_filter %} data-player-filter{% endif %}{% if p == pos %} checked{% endif %}>
     <label class="segment" for="pos-{{ p }}">{{ p }}</label>
     {% endfor %}
   </div>
-</fieldset>
+</div>
 {% endmacro %}
 
 {% macro player_select(names, name, label='Player', empty='Pick a player') %}

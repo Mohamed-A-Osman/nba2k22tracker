@@ -17,7 +17,9 @@
 <form class="filters" action="{{ url_for('v2.games') }}" method="get" data-autosubmit>
   {{ player_select(names, name, empty='All players') }}
   {% if name %}
-  {{ position_filter(pos, player_filter=True) }}
+  {% if player_positions|length > 1 %}
+  {{ position_filter(pos, player_filter=True, choices=player_positions) }}
+  {% endif %}
   {% if lineup %}
   {% for mate in with_ %}<input type="hidden" name="With" value="{{ mate }}" data-player-filter>{% endfor %}
   {% if exact %}<input type="hidden" name="Lineup" value="exact" data-player-filter>{% endif %}

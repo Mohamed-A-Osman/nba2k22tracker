@@ -17,7 +17,11 @@
 
 <form class="filters" action="{{ url_for('v2.matchups') }}" method="get" data-autosubmit>
   {{ player_select(names, name) }}
+  {% if not name %}
   {{ position_filter(pos) }}
+  {% elif player_positions|length > 1 %}
+  {{ position_filter(pos, choices=player_positions) }}
+  {% endif %}
   <button class="button apply" type="submit">Apply</button>
 </form>
 

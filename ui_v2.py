@@ -136,6 +136,7 @@ def games():
 
     return render_template(
         'v2/games.html', names=names, name=name, pos=pos, with_=with_ or [], vs=vs, exact=exact,
+        player_positions=stats.positions_of(name) if name else [],
         lineup=len(with_ or []) > 1 or exact, groups=_nights(found), count=len(found),
         wins=wins, seats=seats,
         clear_lineup_url=url_for('v2.games', Name=name, Position=pos, Vs=vs))
@@ -172,6 +173,7 @@ def matchups():
     rows = [{'line': line, 'href': url_for('v2.games', Name=name, Position=pos, Vs=line.label)} for line in lines]
     best, worst = _called_out(lines)
     return render_template('v2/matchups.html', names=names, name=name, pos=pos, rows=rows,
+                           player_positions=stats.positions_of(name) if name else [],
                            columns=COLUMNS, best=best, worst=worst, min_games=MIN_GAMES_TO_CALL_OUT)
 
 

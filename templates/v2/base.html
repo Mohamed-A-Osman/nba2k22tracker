@@ -5,21 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{% block title %}2K22 Stat Tracker{% endblock %}</title>
 <script src="{{ url_for('static', filename='theme.js') }}"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preload" href="{{ url_for('static', filename='fonts/anton-400.woff2') }}" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{{ url_for('static', filename='fonts/barlow-400.woff2') }}" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="{{ url_for('static', filename='v2.css') }}">
 <script src="{{ url_for('static', filename='v2.js') }}" defer></script>
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 <div class="page">
-  <svg class="court" viewBox="0 0 860 860" fill="none" stroke-width="2" aria-hidden="true">
+  <div class="court-band" aria-hidden="true">
+  <svg class="court" viewBox="0 0 860 860" fill="none" stroke-width="2">
     <circle cx="430" cy="430" r="190"></circle>
     <circle cx="430" cy="430" r="64"></circle>
     <path d="M40 430 H820"></path>
     <path d="M430 40 A390 390 0 0 1 820 430"></path>
   </svg>
+  </div>
 
   <header class="topbar">
     <a class="wordmark" href="{{ url_for('v2.home') }}" aria-label="2K22 Stat Tracker home">

@@ -19,8 +19,9 @@
     </g>
     {% for pos, owner, count in owners %}
     {% set x, y = spots[pos] %}
-    {# Side spots anchor their labels inward on phones, where the labels grow #}
-    <a class="spot{% if pos == 'SF' %} spot-left{% elif pos == 'SG' %} spot-right{% endif %}" href="{{ url_for('v2.averages', Position=pos) }}" aria-label="{{ pos }}: {{ owner }}, {{ count }} games. Open everyone's averages at {{ pos }}">
+    {# On phones, where the labels grow, SF and PF labels run rightward from the dot and SG's run leftward,
+       so they stay inside the court and clear of C's labels #}
+    <a class="spot{% if pos in ('SF', 'PF') %} spot-anchor-start{% elif pos == 'SG' %} spot-anchor-end{% endif %}" href="{{ url_for('v2.averages', Position=pos) }}" aria-label="{{ pos }}: {{ owner }}, {{ count }} games. Open everyone's averages at {{ pos }}">
       <circle class="spot-hit" cx="{{ x }}" cy="{{ y }}" r="40"></circle>
       <circle class="spot-dot" cx="{{ x }}" cy="{{ y }}" r="16"></circle>
       <text class="spot-pos" x="{{ x }}" y="{{ y + 5 }}" text-anchor="middle">{{ pos }}</text>

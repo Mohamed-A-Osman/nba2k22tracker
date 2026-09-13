@@ -1272,22 +1272,22 @@ input:focus-visible + .segment {
         transform: translateY(16px);
     }
 
-    .spot-left .spot-name {
+    .spot-anchor-start .spot-name {
         text-anchor: start;
         transform: translate(-22px, 6px);
     }
 
-    .spot-left .spot-meta {
+    .spot-anchor-start .spot-meta {
         text-anchor: start;
         transform: translate(-22px, 16px);
     }
 
-    .spot-right .spot-name {
+    .spot-anchor-end .spot-name {
         text-anchor: end;
         transform: translate(22px, 6px);
     }
 
-    .spot-right .spot-meta {
+    .spot-anchor-end .spot-meta {
         text-anchor: end;
         transform: translate(22px, 16px);
     }

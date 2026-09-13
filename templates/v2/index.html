@@ -1,40 +1,42 @@
 {% extends 'v2/base.html' %}
 {% from 'v2/_macros.html' import game_row %}
+{% block body_class %}home{% endblock %}
 {% block main %}
-<section class="hero">
-  <div class="hero-copy">
-    <h1 class="display">Every game<br><span>we played.</span></h1>
-    <p class="lede">{{ h.games }} games of NBA 2K22 between {{ h.players }} of us, {{ h.first_month }} to {{ h.last_month }}. Open any box score, or see who plays best with whom.</p>
+{# Where each position's spot sits on the half court (viewBox units: 500 wide, 470 deep, basket at the top) #}
+{% set spots = {'PG': (250, 335), 'SG': (420, 262), 'SF': (80, 232), 'PF': (362, 150), 'C': (250, 116)} %}
+<section class="hero-court" aria-labelledby="home-title">
+  <h1 class="visually-hidden" id="home-title">2K22 Stat Tracker: every NBA 2K22 game our group played</h1>
+  <svg class="court-floor" viewBox="-10 -10 520 490" role="group" aria-label="Half court with the player who played each position most">
+    <g class="court-line">
+      <rect x="0" y="0" width="500" height="470"></rect>
+      <rect x="170" y="0" width="160" height="190"></rect>
+      <circle cx="250" cy="190" r="60"></circle>
+      <line x1="220" y1="40" x2="280" y2="40"></line>
+      <circle cx="250" cy="52.5" r="7.5"></circle>
+      <path d="M 210 52.5 A 40 40 0 0 0 290 52.5"></path>
+      <path d="M 30 0 V 140 A 237.5 237.5 0 0 0 470 140 V 0"></path>
+      <path d="M 190 470 A 60 60 0 0 1 310 470"></path>
+    </g>
+    {% for pos, owner, count in owners %}
+    {% set x, y = spots[pos] %}
+    <a class="spot" href="{{ url_for('v2.averages', Position=pos) }}" aria-label="{{ pos }}: {{ owner }}, {{ count }} games. Open everyone's averages at {{ pos }}">
+      <circle cx="{{ x }}" cy="{{ y }}" r="16"></circle>
+      <text class="spot-pos" x="{{ x }}" y="{{ y + 5 }}" text-anchor="middle">{{ pos }}</text>
+      <text class="spot-name" x="{{ x }}" y="{{ y + 42 }}" text-anchor="middle">{{ owner }}</text>
+      <text class="spot-meta" x="{{ x }}" y="{{ y + 62 }}" text-anchor="middle">{{ count }} games</text>
+    </a>
+    {% endfor %}
+  </svg>
+  <div class="court-side">
+    <h2 class="court-caption">Who played each spot most</h2>
+    <p class="note">Across {{ h.games }} games between {{ h.players }} of us, {{ h.first_month }} to {{ h.last_month }}. Tap a spot to see everyone's averages at that position.</p>
     <div class="actions">
       <a class="button" href="{{ url_for('v2.games') }}">
         Open the game log
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
       </a>
-      <a class="text-link" href="{{ url_for('v2.averages') }}">Career averages</a>
     </div>
   </div>
-
-  {% if last %}
-  {% set t1, t2 = last.teams %}
-  <section class="last-game" aria-labelledby="last-game-title">
-    <h2 class="section-title" id="last-game-title">Last game</h2>
-    <p class="when">{{ last.played|night|day }}</p>
-    <div class="score" aria-label="T1 {{ t1.points }}, T2 {{ t2.points }}">
-      <span class="side">T1</span>
-      <span class="pts{% if last.winner == 'T1' %} win{% endif %}">{{ t1.points }}</span>
-      <span class="dash">–</span>
-      <span class="pts{% if last.winner == 'T2' %} win{% endif %}">{{ t2.points }}</span>
-      <span class="side">T2</span>
-    </div>
-    <div class="tops">
-      {% for team in last.teams %}
-      {% set top = team.players[0] if team.players else none %}
-      <span{% if last.winner == team.side %} class="won"{% endif %}>{{ team.side }}{% if last.winner == team.side %} won{% endif %}{% if top %}: {{ top.name }} scored {{ top.points }}{% endif %}</span>
-      {% endfor %}
-    </div>
-    <a class="text-link" href="{{ url_for('v2.game', game_id=last.id) }}">Full box score</a>
-  </section>
-  {% endif %}
 </section>
 
 <div class="home-grid">

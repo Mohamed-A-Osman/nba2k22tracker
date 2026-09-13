@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='v2.css') }}">
 <script src="{{ url_for('static', filename='v2.js') }}" defer></script>
 </head>
-<body>
+<body class="{% block body_class %}{% endblock %}">
 <a class="skip-link" href="#main">Skip to content</a>
 <div class="page">
   <div class="court-band" aria-hidden="true">

@@ -114,8 +114,8 @@ def site_context():
 @bp.route('/')
 def home():
     dated = [game for game in stats.box_scores() if game.played]
-    return render_template('v2/index.html', h=stats.landing_highlights(),
-                           last=dated[0] if dated else None, latest=dated[:5])
+    return render_template('v2/index.html', h=stats.landing_highlights(), latest=dated[:5],
+                           owners=stats.position_owners())
 
 
 @bp.route('/games')

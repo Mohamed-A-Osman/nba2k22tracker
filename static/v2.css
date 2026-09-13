@@ -57,6 +57,7 @@
     --highlight: #b07808;
     --gold-text: #8a5e00;
     --court: rgba(106, 79, 209, 0.14);
+    --court-strong: rgba(106, 79, 209, 0.45);
     --glow-border: rgba(106, 79, 209, 0.3);
     --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235f5870' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
 }
@@ -77,6 +78,7 @@
     --highlight: #f2b441;
     --gold-text: #f2b441;
     --court: rgba(139, 108, 240, 0.16);
+    --court-strong: rgba(139, 108, 240, 0.5);
     --glow-border: rgba(139, 108, 240, 0.35);
     --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23a9a1bd' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
 }
@@ -119,6 +121,10 @@ a {
 .display {
     font-family: 'Anton', 'Arial Narrow', sans-serif;
     font-weight: 400;
+}
+
+.tag {
+    white-space: nowrap;
 }
 
 .visually-hidden {
@@ -178,9 +184,13 @@ main {
     top: 0;
     right: -180px;
     width: 860px;
-    height: 340px;
+    height: 240px;
     overflow: hidden;
     pointer-events: none;
+}
+
+.home .court-band {
+    display: none;
 }
 
 .court {
@@ -949,66 +959,12 @@ input:focus-visible + .segment {
 
 /* ---------- Landing ---------- */
 
-.hero {
-    position: relative;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 420px;
-    align-items: end;
-    gap: 64px;
-    padding-top: 72px;
-}
-
-.hero-copy {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.hero h1 {
-    margin: 0;
-    font-size: clamp(50px, 7.2vw, 104px);
-    line-height: 0.95;
-    text-transform: uppercase;
-}
-
-.hero h1 span {
-    color: var(--highlight);
-}
-
-.lede {
-    margin: 0;
-    max-width: 560px;
-    font-size: 20px;
-    line-height: 1.5;
-    color: var(--muted);
-    text-wrap: pretty;
-}
-
 .actions {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 24px;
     margin-top: 8px;
-}
-
-.last-game {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    padding: 28px;
-    border: 1px solid var(--glow-border);
-    border-radius: 20px;
-    background: var(--surface);
-}
-
-.last-game .when {
-    font-size: 0.9375rem;
-    color: var(--faint);
-}
-
-.last-game .score .pts {
-    font-size: 3.5rem;
 }
 
 .home-grid {
@@ -1067,6 +1023,74 @@ input:focus-visible + .segment {
 .index-line strong {
     color: var(--text);
     font-weight: 600;
+}
+
+/* ---------- Landing hero: the court ---------- */
+
+.hero-court {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 600px) minmax(0, 1fr);
+    align-items: center;
+    gap: 56px;
+    padding-top: 40px;
+}
+
+.court-floor {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.court-floor .court-line {
+    fill: none;
+    stroke: var(--court-strong);
+    stroke-width: 2.5;
+}
+
+.spot circle {
+    fill: var(--button);
+    transition: fill 150ms ease-out;
+}
+
+.spot:hover circle,
+.spot:focus circle {
+    fill: var(--highlight);
+}
+
+.spot-pos {
+    fill: #ffffff;
+    font: 700 13px 'Barlow', sans-serif;
+}
+
+.spot-name {
+    fill: var(--text);
+    font: 700 20px 'Barlow', sans-serif;
+}
+
+.spot-meta {
+    fill: var(--muted);
+    font: 600 16px 'Barlow', sans-serif;
+}
+
+.spot-name,
+.spot-meta {
+    paint-order: stroke;
+    stroke: var(--bg);
+    stroke-width: 5px;
+    stroke-linejoin: round;
+}
+
+.court-side {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.court-caption {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
 }
 
 /* ---------- Upload ---------- */
@@ -1132,8 +1156,8 @@ input:focus-visible + .segment {
         padding: 0 32px;
     }
 
-    .hero,
-    .home-grid {
+    .home-grid,
+    .hero-court {
         grid-template-columns: minmax(0, 1fr);
         gap: 40px;
     }
@@ -1153,7 +1177,7 @@ input:focus-visible + .segment {
     .court-band {
         right: -220px;
         width: 460px;
-        height: 240px;
+        height: 200px;
     }
 
     .court {
@@ -1219,12 +1243,12 @@ input:focus-visible + .segment {
         flex: 1 1 100%;
     }
 
-    .hero {
-        padding-top: 32px;
+    .hero-court {
+        padding-top: 24px;
     }
 
-    .lede {
-        font-size: 16px;
+    .spot-meta {
+        font-size: 18px;
     }
 
     .actions .button {
@@ -1293,10 +1317,9 @@ input:focus-visible + .segment {
     /* Long names and lineups wrap so the columns beside them stay in view */
     .stats th.label-col,
     .stats td.label-col {
-        min-width: 7.5rem;
+        min-width: 9.5rem;
         max-width: 45vw;
         white-space: normal;
-        overflow-wrap: anywhere;
     }
 
     .swipe-hint {

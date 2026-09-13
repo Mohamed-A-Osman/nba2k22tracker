@@ -59,6 +59,18 @@ def positions_of(name):
 
 
 @cached
+def position_owners():
+    """The player with the most games at each position: [(position, name, games)]."""
+    owners = []
+    for pos in POSITIONS:
+        row = query('SELECT "Name", count(*) FROM player_stats WHERE "Position" = $pos '
+                    'GROUP BY 1 ORDER BY 2 DESC, 1 LIMIT 1', {"pos": pos})
+        if row:
+            owners.append((pos, row[0][0], row[0][1]))
+    return owners
+
+
+@cached
 def average_lines(pos=None):
     if pos is None:
         return _lines(f'SELECT "Name", {STAT_COLUMNS} FROM player_games GROUP BY "Name" HAVING count(*) >= 10')

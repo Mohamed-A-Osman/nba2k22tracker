@@ -104,7 +104,7 @@ Resources:
             HeaderBehavior: none
           QueryStringsConfig:
             QueryStringBehavior: whitelist
-            QueryStrings: [Position, Name, Type, cat]
+            QueryStrings: [Position, Name, Type, cat, With, Vs, Lineup]
 
   Distribution:
     Type: AWS::CloudFront::Distribution

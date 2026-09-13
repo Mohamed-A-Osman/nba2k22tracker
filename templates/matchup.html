@@ -22,7 +22,7 @@ html,body,h1,h2,h3,h4,h5 {font-family: 'Source Sans Pro', sans-serif}
   <button class="w3-bar-item w3-button w3-hide-large w3-hover-none w3-hover-text-light-grey" onclick="w3_open();"><i class="fa fa-bars"></i>  Menu</button>
   <button class="w3-bar-item w3-button w3-right" onclick="toggleTheme()" aria-label="Toggle dark mode" title="Toggle dark mode"><i class="fa fa-moon theme-icon-moon"></i><i class="fa fa-sun theme-icon-sun"></i></button>
   <span class="w3-bar-item w3-right">
-    <a href="/" title="Home"><img src="../static/logo2k.avif" alt="2K22 Stat Tracker home" height="35px"/></a>
+    <a href="/v1/" title="Home"><img src="../static/logo2k.avif" alt="2K22 Stat Tracker home" height="35px"/></a>
   </span>
 </div>
 
@@ -35,11 +35,11 @@ html,body,h1,h2,h3,h4,h5 {font-family: 'Source Sans Pro', sans-serif}
   </div>
   <div class="w3-bar-block">
     <a href="#" class="w3-bar-item w3-button w3-padding-16 w3-hide-large w3-dark-grey w3-hover-black" onclick="w3_close()" title="close menu"><i class="fa fa-remove fa-fw"></i>  Close Menu</a>
-    <a href="/CareerAvg" class="w3-bar-item w3-button w3-padding"><i class="fa fa-users fa-fw"></i> Career Averages</a>
-    <a href="/Matchup" class="w3-bar-item w3-button w3-padding w3-blue"><i class="fa fa-balance-scale-left fa-fw"></i>  Matchup Data</a>
-    <a href="/Teammate" class="w3-bar-item w3-button w3-padding"><i class="fa fa-user-plus fa-fw"></i>  Teammate Stats</a>
-    <a href="/CareerHigh" class="w3-bar-item w3-button w3-padding"><i class="fa fa-bullseye fa-fw"></i>  Career Highs</a>
-    <a href="/Upload" class="w3-bar-item w3-button w3-padding"><i class="fa fa-upload fa-fw"></i>  Upload Box Score</a>
+    <a href="/v1/CareerAvg" class="w3-bar-item w3-button w3-padding"><i class="fa fa-users fa-fw"></i> Career Averages</a>
+    <a href="/v1/Matchup" class="w3-bar-item w3-button w3-padding w3-blue"><i class="fa fa-balance-scale-left fa-fw"></i>  Matchup Data</a>
+    <a href="/v1/Teammate" class="w3-bar-item w3-button w3-padding"><i class="fa fa-user-plus fa-fw"></i>  Teammate Stats</a>
+    <a href="/v1/CareerHigh" class="w3-bar-item w3-button w3-padding"><i class="fa fa-bullseye fa-fw"></i>  Career Highs</a>
+    <a href="/v1/Upload" class="w3-bar-item w3-button w3-padding"><i class="fa fa-upload fa-fw"></i>  Upload Box Score</a>
   </div>
 </nav>
 
@@ -52,11 +52,11 @@ html,body,h1,h2,h3,h4,h5 {font-family: 'Source Sans Pro', sans-serif}
 
   <!-- Header -->
   <header class="w3-container" style="padding-top:22px">
-    <a href="/"><h5><b><i class="fa fa-home"></i></a> Home</b></h5>
+    <a href="/v1/"><h5><b><i class="fa fa-home"></i></a> Home</b></h5>
   </header>
   <div class="w3-row-padding w3-margin-bottom">
     <div class="w3-quarter">
-        <form action="/Matchup" method = "GET">
+        <form action="/v1/Matchup" method = "GET">
         <div id="formelems">
             
                 <label for="Names"></label>

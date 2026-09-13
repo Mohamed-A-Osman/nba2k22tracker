@@ -1,4 +1,4 @@
-"""v1 UI: the original pages, served at the site root."""
+"""v1 UI: the original pages, kept at /v1 for comparison."""
 import random
 
 from flask import Blueprint, render_template, request
@@ -83,8 +83,3 @@ def Upload():
         else:
             message = "Pick an image to upload first."
     return render_template('upload.html', message=message)
-
-
-@bp.app_errorhandler(413)
-def upload_too_large(error):
-    return render_template('upload.html', message="That file is over 5 MB, so it wasn't uploaded."), 413

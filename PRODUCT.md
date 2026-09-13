@@ -27,7 +27,7 @@ It is the only record of this group's games. NBA 2K does not keep a friend group
 
 ## Capabilities and Constraints
 
-- An archive of NBA 2K22 only: 152 games, 16 players, November 2021 to June 2022. No game or season switcher is needed.
+- An archive of NBA 2K22 only: 151 games, 16 players, November 2021 to June 2022. No game or season switcher is needed.
 - New games will come from uploaded box-score screenshots read by OCR. OCR is not built yet, so the upload page saves nothing.
 - Career Averages for all positions lists only players with 10 or more games. The landing page's best-duo highlight needs 15 or more games together.
 - Stack: Flask with server-rendered Jinja templates; data in Parquet files queried in memory with DuckDB; hosted on AWS Lambda behind CloudFront at roughly $0 a month. Pages are cached for 5 minutes, and the query parameters `Position`, `Name`, `Type` and `cat` (plus the game log's `With`, `Vs` and `Lineup`) are the cache key, so page URLs keep using them and any new parameter must be added to `template.yaml`.
@@ -43,8 +43,9 @@ It is the only record of this group's games. NBA 2K does not keep a friend group
 
 ## Evidence on Hand
 
-- Real data: `data/player_stats.parquet` (1,398 player-game rows) and `data/game_totals.parquet` (304 team rows), exported from the local Postgres master copy.
-- Box-score screenshots (console captures) for all 152 games, imported into `data/screenshots/` by `scripts/import_screenshots.py` and shown on each game's page. Seven extra captures taken before a game's final buzzer are left out.
+- Game NBA2K22_20211217020356 (Dec 16, 2021) was removed at the user's request; its rows are backed up in `data/removed/`.
+- Real data: `data/player_stats.parquet` (1,392 player-game rows) and `data/game_totals.parquet` (302 team rows), exported from the local Postgres master copy.
+- Box-score screenshots (console captures) for all 151 games, imported into `data/screenshots/` by `scripts/import_screenshots.py` and shown on each game's page. Seven extra captures taken before a game's final buzzer are left out.
 - There are no photos of the group and no testimonials. Do not invent any.
 
 ## Product Principles

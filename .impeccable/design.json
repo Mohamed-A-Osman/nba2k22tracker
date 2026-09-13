@@ -1,0 +1,157 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-12T00:00:00Z",
+  "title": "Design System: 2K22 Stat Tracker",
+  "extensions": {
+    "colorMeta": {
+      "ground-dark": { "role": "neutral", "displayName": "Night Ground", "canonical": "#0e0c14", "tonalRamp": ["#0e0c14", "#1a1624", "#2a2438", "#433b55", "#645b78", "#8f87a3", "#c3bdd2", "#f4f1fa"] },
+      "surface-dark": { "role": "neutral", "displayName": "Raised Surface (dark)", "canonical": "#1a1624", "tonalRamp": ["#0e0c14", "#15121e", "#1a1624", "#2a2438", "#433b55", "#645b78", "#a9a1bd", "#f4f1fa"] },
+      "card-dark": { "role": "neutral", "displayName": "Table Card (dark)", "canonical": "#15121e", "tonalRamp": ["#0e0c14", "#15121e", "#1a1624", "#2a2438", "#433b55", "#645b78", "#a9a1bd", "#f4f1fa"] },
+      "text-dark": { "role": "neutral", "displayName": "Ink (dark)", "canonical": "#f4f1fa", "tonalRamp": ["#17131f", "#2a2438", "#433b55", "#645b78", "#8f87a3", "#a9a1bd", "#d6d1e2", "#f4f1fa"] },
+      "muted-dark": { "role": "neutral", "displayName": "Muted (dark)", "canonical": "#a9a1bd", "tonalRamp": ["#17131f", "#2a2438", "#433b55", "#645b78", "#8f87a3", "#a9a1bd", "#d6d1e2", "#f4f1fa"] },
+      "faint-dark": { "role": "neutral", "displayName": "Faint (dark)", "canonical": "#8f87a3", "tonalRamp": ["#17131f", "#2a2438", "#433b55", "#645b78", "#8f87a3", "#a9a1bd", "#d6d1e2", "#f4f1fa"] },
+      "accent-dark": { "role": "primary", "displayName": "Arena Purple (dark)", "canonical": "#8b6cf0", "tonalRamp": ["#1c1238", "#2f1f66", "#4a33a3", "#6a4fd1", "#7a5ae6", "#8b6cf0", "#b9a6f6", "#ece6fd"] },
+      "button-dark": { "role": "primary", "displayName": "Arena Purple Button (dark)", "canonical": "#7a5ae6", "tonalRamp": ["#1c1238", "#2f1f66", "#4a33a3", "#6a4fd1", "#7a5ae6", "#8b6cf0", "#b9a6f6", "#ece6fd"] },
+      "gold-dark": { "role": "secondary", "displayName": "Trophy Gold (dark)", "canonical": "#f2b441", "tonalRamp": ["#2e1f00", "#5a3d00", "#8a5e00", "#b07808", "#d6961f", "#f2b441", "#f8d690", "#fdf3de"] },
+      "ground-light": { "role": "neutral", "displayName": "Lilac Ground", "canonical": "#f6f4fa", "tonalRamp": ["#17131f", "#2a2438", "#433b55", "#5f5870", "#8f87a3", "#c3bdd2", "#e7e3ef", "#f6f4fa"] },
+      "surface-light": { "role": "neutral", "displayName": "Raised Surface (light)", "canonical": "#ffffff", "tonalRamp": ["#17131f", "#2a2438", "#433b55", "#5f5870", "#8f87a3", "#c3bdd2", "#f6f4fa", "#ffffff"] },
+      "text-light": { "role": "neutral", "displayName": "Ink (light)", "canonical": "#17131f", "tonalRamp": ["#17131f", "#2a2438", "#433b55", "#5f5870", "#8f87a3", "#c3bdd2", "#e7e3ef", "#f6f4fa"] },
+      "muted-light": { "role": "neutral", "displayName": "Muted (light)", "canonical": "#5f5870", "tonalRamp": ["#17131f", "#2a2438", "#433b55", "#5f5870", "#8f87a3", "#c3bdd2", "#e7e3ef", "#f6f4fa"] },
+      "faint-light": { "role": "neutral", "displayName": "Faint (light)", "canonical": "#6f6885", "tonalRamp": ["#17131f", "#2a2438", "#433b55", "#6f6885", "#8f87a3", "#c3bdd2", "#e7e3ef", "#f6f4fa"] },
+      "accent-light": { "role": "primary", "displayName": "Arena Purple (light)", "canonical": "#6a4fd1", "tonalRamp": ["#1c1238", "#2f1f66", "#4a33a3", "#6a4fd1", "#7a5ae6", "#8b6cf0", "#b9a6f6", "#ece6fd"] },
+      "gold-display-light": { "role": "secondary", "displayName": "Trophy Gold, display only (light)", "canonical": "#b07808", "tonalRamp": ["#2e1f00", "#5a3d00", "#8a5e00", "#b07808", "#d6961f", "#f2b441", "#f8d690", "#fdf3de"] },
+      "gold-text-light": { "role": "secondary", "displayName": "Trophy Gold, small text (light)", "canonical": "#8a5e00", "tonalRamp": ["#2e1f00", "#5a3d00", "#8a5e00", "#b07808", "#d6961f", "#f2b441", "#f8d690", "#fdf3de"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Page titles only, uppercase, once per page. 2.125rem on phones." },
+      "score-final": { "displayName": "Final Score", "purpose": "The two team totals at the top of a box score; winner in gold. 3.5rem on phones." },
+      "score-row": { "displayName": "Row Score", "purpose": "The two totals inside each game row; winner in gold." },
+      "answer": { "displayName": "Answer", "purpose": "Lead sentence under each page title, muted, max 62ch, key facts in 600 ink." },
+      "title": { "displayName": "Title", "purpose": "Section heads such as Latest games." },
+      "body": { "displayName": "Body", "purpose": "Default text." },
+      "data": { "displayName": "Data", "purpose": "Table cells, game rows and records, always with tabular numerals." },
+      "label": { "displayName": "Column Label", "purpose": "Uppercase stat table column headers only." }
+    },
+    "shadows": [],
+    "motion": [
+      { "name": "state-change", "value": "150ms ease-out", "purpose": "Colour, border, background and filter changes on hover and selection. Disabled under prefers-reduced-motion." }
+    ],
+    "breakpoints": [
+      { "name": "phone", "value": "760px" },
+      { "name": "tablet", "value": "1100px" },
+      { "name": "max-width", "value": "1440px" }
+    ],
+    "themeTokens": {
+      "note": "Live CSS custom properties in static/v2.css; light on :root, dark on [data-theme=\"dark\"].",
+      "light": { "--line": "rgba(23, 19, 31, 0.1)", "--chip": "rgba(23, 19, 31, 0.06)", "--row-hover": "rgba(106, 79, 209, 0.06)", "--court": "rgba(106, 79, 209, 0.14)", "--court-strong": "rgba(106, 79, 209, 0.45)", "--glow-border": "rgba(106, 79, 209, 0.3)" },
+      "dark": { "--line": "rgba(255, 255, 255, 0.08)", "--chip": "rgba(255, 255, 255, 0.06)", "--row-hover": "rgba(139, 108, 240, 0.08)", "--court": "rgba(139, 108, 240, 0.16)", "--court-strong": "rgba(139, 108, 240, 0.5)", "--glow-border": "rgba(139, 108, 240, 0.35)" }
+    },
+    "focusRing": "outline: 2px solid var(--accent); outline-offset: 2px;"
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The single primary action on a view, a purple pill with an optional trailing arrow.",
+      "html": "<a class=\"ds-button\" href=\"#\">Open the game log <svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14M13 6l6 6-6 6\"></path></svg></a>",
+      "css": ".ds-button { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; padding: 12px 24px; border: 0; border-radius: 999px; background: var(--button, #6a4fd1); color: #ffffff; font-family: 'Barlow', 'Segoe UI', sans-serif; font-size: 16px; font-weight: 600; text-decoration: none; cursor: pointer; transition: filter 150ms ease-out; } .ds-button:hover { filter: brightness(1.08); } .ds-button:focus-visible { outline: 2px solid var(--accent, #6a4fd1); outline-offset: 2px; }"
+    },
+    {
+      "name": "Text Button",
+      "kind": "button",
+      "refersTo": "text-button",
+      "description": "Unfilled purple action for table tools such as More stats.",
+      "html": "<button type=\"button\" class=\"ds-text-button\">More stats</button>",
+      "css": ".ds-text-button { padding: 8px 0; border: 0; background: none; color: var(--accent, #6a4fd1); font-family: 'Barlow', 'Segoe UI', sans-serif; font-size: 0.9375rem; font-weight: 600; white-space: nowrap; cursor: pointer; } .ds-text-button:hover { text-decoration: underline; text-underline-offset: 3px; } .ds-text-button:focus-visible { outline: 2px solid var(--accent, #6a4fd1); outline-offset: 2px; border-radius: 4px; }"
+    },
+    {
+      "name": "Position Segments",
+      "kind": "chip",
+      "refersTo": "segment",
+      "description": "Pill radios for choosing a position; the selected one fills purple.",
+      "html": "<div class=\"ds-segments\"><span class=\"ds-seg\">All</span><span class=\"ds-seg ds-seg-on\">PG</span><span class=\"ds-seg\">SG</span><span class=\"ds-seg\">SF</span><span class=\"ds-seg\">PF</span><span class=\"ds-seg\">C</span></div>",
+      "css": ".ds-segments { display: flex; flex-wrap: wrap; gap: 6px; font-family: 'Barlow', 'Segoe UI', sans-serif; } .ds-seg { display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border: 1px solid var(--line, rgba(23,19,31,0.1)); border-radius: 999px; background: var(--surface, #ffffff); color: var(--muted, #5f5870); font-size: 0.9375rem; font-weight: 600; cursor: pointer; transition: background-color 150ms ease-out, color 150ms ease-out, border-color 150ms ease-out; } .ds-seg:hover { color: var(--text, #17131f); border-color: var(--glow-border, rgba(106,79,209,0.3)); } .ds-seg-on, .ds-seg-on:hover { background: var(--button, #6a4fd1); border-color: var(--button, #6a4fd1); color: #ffffff; }"
+    },
+    {
+      "name": "Player Select",
+      "kind": "input",
+      "refersTo": "select",
+      "description": "Labelled native select with a custom chevron.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-field-label\">Player</span><select class=\"ds-select\"><option>Pick a player</option><option>King_Slayer-101</option></select></label>",
+      "css": ".ds-field { display: flex; flex-direction: column; gap: 6px; min-width: 200px; font-family: 'Barlow', 'Segoe UI', sans-serif; } .ds-field-label { font-size: 0.8125rem; font-weight: 600; color: var(--muted, #5f5870); } .ds-select { min-height: 44px; padding: 10px 40px 10px 14px; border: 1px solid var(--line, rgba(23,19,31,0.1)); border-radius: 10px; background: var(--surface, #ffffff) url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%235f5870' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E\") no-repeat right 12px center; color: var(--text, #17131f); font: inherit; font-size: 1rem; appearance: none; cursor: pointer; } .ds-select:hover { border-color: var(--glow-border, rgba(106,79,209,0.3)); } .ds-select:focus-visible { outline: 2px solid var(--accent, #6a4fd1); outline-offset: 2px; }"
+    },
+    {
+      "name": "Top Navigation",
+      "kind": "nav",
+      "refersTo": "nav",
+      "description": "Muted links with a purple underline on the current page; wraps rather than collapsing on phones.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-link\" href=\"#\" aria-current=\"page\">Game log</a><a class=\"ds-nav-link\" href=\"#\">Averages</a><a class=\"ds-nav-link\" href=\"#\">Matchups</a><a class=\"ds-nav-link\" href=\"#\">Teammates</a><a class=\"ds-nav-link\" href=\"#\">Highs</a></nav>",
+      "css": ".ds-nav { display: flex; flex-wrap: wrap; gap: 0 28px; font-family: 'Barlow', 'Segoe UI', sans-serif; font-size: 15px; font-weight: 500; } .ds-nav-link { display: inline-flex; align-items: center; min-height: 44px; color: var(--muted, #5f5870); text-decoration: none; border-bottom: 2px solid transparent; transition: color 150ms ease-out, border-color 150ms ease-out; } .ds-nav-link:hover { color: var(--text, #17131f); } .ds-nav-link[aria-current=\"page\"] { color: var(--text, #17131f); border-bottom-color: var(--accent, #6a4fd1); } .ds-nav-link:focus-visible { outline: 2px solid var(--accent, #6a4fd1); outline-offset: 2px; border-radius: 4px; }"
+    },
+    {
+      "name": "Player Chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Pill link to a player's filtered view.",
+      "html": "<a class=\"ds-chip\" href=\"#\">moh-_-1</a>",
+      "css": ".ds-chip { display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border: 1px solid var(--line, rgba(23,19,31,0.1)); border-radius: 999px; background: var(--surface, #ffffff); color: var(--text, #17131f); font-family: 'Barlow', 'Segoe UI', sans-serif; font-weight: 600; white-space: nowrap; text-decoration: none; transition: border-color 150ms ease-out; } .ds-chip:hover { border-color: var(--glow-border, rgba(106,79,209,0.3)); } .ds-chip:focus-visible { outline: 2px solid var(--accent, #6a4fd1); outline-offset: 2px; }"
+    },
+    {
+      "name": "Game Row",
+      "kind": "custom",
+      "refersTo": "game-row",
+      "description": "The recurring atom: time or date, final score with the winner in gold, each side's top scorer, optional player line, arrow at the right edge.",
+      "html": "<a class=\"ds-game-row\" href=\"#\"><span class=\"ds-time\">Fri 11:42 pm</span><span class=\"ds-score\"><span class=\"ds-side\">T1</span><span class=\"ds-pts ds-win\">84</span><span class=\"ds-dash\">–</span><span class=\"ds-pts\">77</span><span class=\"ds-side\">T2</span></span><span class=\"ds-tops\"><span class=\"ds-won\">T1 won: <span class=\"ds-tag\">King_Slayer-101</span> 31</span><span>T2: <span class=\"ds-tag\">moh-_-1</span> 24</span></span><span class=\"ds-mine\"><span class=\"ds-result-won\">Won</span> · <strong>31 pts</strong>, 8 reb, 6 ast · PG</span><svg class=\"ds-arrow\" width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M9 6l6 6-6 6\"></path></svg></a>",
+      "css": ".ds-game-row { display: grid; grid-template-columns: 5.5rem 11.5rem minmax(0, 1fr) minmax(0, 1fr) 20px; align-items: center; gap: 20px; padding: 14px 12px; border-bottom: 1px solid var(--line, rgba(23,19,31,0.1)); color: var(--muted, #5f5870); font-family: 'Barlow', 'Segoe UI', sans-serif; text-decoration: none; transition: background-color 150ms ease-out; } .ds-game-row:hover { background: var(--row-hover, rgba(106,79,209,0.06)); } .ds-game-row:focus-visible { outline: 2px solid var(--accent, #6a4fd1); outline-offset: 2px; } .ds-time { font-size: 0.9375rem; color: var(--faint, #6f6885); font-variant-numeric: tabular-nums; } .ds-score { display: flex; align-items: baseline; gap: 10px; font-variant-numeric: tabular-nums; } .ds-side { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; color: var(--faint, #6f6885); } .ds-pts { font-family: 'Anton', 'Arial Narrow', sans-serif; font-size: 1.75rem; line-height: 1; color: var(--muted, #5f5870); } .ds-pts.ds-win { color: var(--highlight, #b07808); } .ds-dash { color: var(--faint, #6f6885); } .ds-tops { display: flex; flex-direction: column; gap: 2px; font-size: 0.9375rem; } .ds-won { color: var(--text, #17131f); font-weight: 600; } .ds-tag { white-space: nowrap; } .ds-mine { font-size: 0.9375rem; } .ds-mine strong { color: var(--text, #17131f); font-weight: 600; } .ds-result-won { font-weight: 700; color: var(--gold-text, #8a5e00); } .ds-arrow { color: var(--faint, #6f6885); }"
+    },
+    {
+      "name": "Stat Table",
+      "kind": "card",
+      "refersTo": "stat-table",
+      "description": "Card panel with a pinned name column, right-aligned tabular data, uppercase sortable headers, games numbers linking to the filtered game log, leaders in gold.",
+      "html": "<div class=\"ds-table-wrap\"><table class=\"ds-stats\"><thead><tr><th class=\"ds-label-col\">Player</th><th>Games</th><th>W–L</th><th>PTS</th><th>REB</th></tr></thead><tbody><tr><td class=\"ds-label-col\"><span class=\"ds-tag\">King_Slayer-101</span></td><td><a class=\"ds-games-link\" href=\"#\">42</a></td><td>27–15</td><td class=\"ds-leader\">24.8</td><td>6.1</td></tr><tr><td class=\"ds-label-col\"><span class=\"ds-tag\">moh-_-1</span></td><td><a class=\"ds-games-link\" href=\"#\">38</a></td><td>20–18</td><td>19.2</td><td class=\"ds-leader\">8.4</td></tr></tbody></table></div>",
+      "css": ".ds-table-wrap { overflow-x: auto; border: 1px solid var(--line, rgba(23,19,31,0.1)); border-radius: 16px; background: var(--card, #ffffff); } .ds-stats { width: 100%; border-collapse: separate; border-spacing: 0; font-family: 'Barlow', 'Segoe UI', sans-serif; font-size: 0.9375rem; font-variant-numeric: tabular-nums; color: var(--text, #17131f); } .ds-stats th, .ds-stats td { padding: 12px 14px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--line, rgba(23,19,31,0.1)); } .ds-stats th { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted, #5f5870); } .ds-stats tbody tr:last-child td { border-bottom: 0; } .ds-stats tbody tr:hover td { background: var(--row-hover, rgba(106,79,209,0.06)); } .ds-label-col { position: sticky; left: 0; text-align: left !important; background: var(--card, #ffffff); border-right: 1px solid var(--line, rgba(23,19,31,0.1)); } td.ds-label-col { font-weight: 600; } .ds-tag { white-space: nowrap; } .ds-games-link { color: var(--accent, #6a4fd1); font-weight: 600; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; } .ds-games-link:hover { text-decoration-thickness: 2px; } .ds-games-link:focus-visible { outline: 2px solid var(--accent, #6a4fd1); outline-offset: 2px; border-radius: 4px; } .ds-leader { font-weight: 700; color: var(--gold-text, #8a5e00); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Arena Night",
+    "overview": "The site is a box score read under arena lights: a near-black ground (a pale lilac ground in light mode), purple that only ever means \"you can act here\", gold that only ever means \"this side won\" or \"this is the record\", and thin court-line strokes that belong to the game itself. The game is the unit of truth. Every page is a view onto the box scores, and every number is a door back to the games that produced it, so the visual system spends its emphasis on outcomes and links and nothing else.\n\nDensity is that of a scoreboard, not a dashboard. Pages lead with a plain-language answer in muted text with the key name or number in full-strength weight, then the full table or game list. Surfaces are flat and hairline-bordered; there is no photography, no league or team marks, and no ornament beyond the court. Motion is limited to 150 ms state changes, with no load choreography, and is switched off under reduced motion.\n\nLight and dark themes are both first-class (light is the default; the toggle remembers the choice). Every colour role has a value in each theme.",
+    "keyCharacteristics": [
+      "Two display moments only: the page title and the final score, both in Anton.",
+      "Everything else, including every number in every table, is Barlow with tabular numerals.",
+      "Gold marks winners and records; purple marks links, focus and state.",
+      "Court lines are structural on the landing hero and the box score divider, decorative in one clipped header band, and absent from data.",
+      "The game row is the atom; a games count in a table always opens exactly that many games."
+    ],
+    "rules": [
+      { "name": "The Trophy Rule", "body": "Gold is reserved for winners and records only. If a gold element does not mark a winning score, a win result, a table leader, or a career high, it is wrong. In light mode, text below display size uses the darker gold text tone, never the display tone.", "section": "colors" },
+      { "name": "The Purple Means Act Rule", "body": "Purple is for links, focus and state only: a purple element is something you can press, the thing that has focus, or the option currently selected. It never highlights data.", "section": "colors" },
+      { "name": "The Two Moments Rule", "body": "Anton appears only in page titles and final scores (game rows and the box score). Section heads, captions, stat values and records are Barlow.", "section": "typography" },
+      { "name": "The Tabular Rule", "body": "Every number a reader compares is set with tabular numerals.", "section": "typography" },
+      { "name": "The Unbroken Tag Rule", "body": "Gamer tags never break across lines: each tag sits in a no-wrap span, and a lineup of several tags wraps only at the comma between names. Exact case and punctuation of tags are preserved.", "section": "typography" },
+      { "name": "The 44 Rule", "body": "Every tap target is at least 44px tall: segments, chips, selects, the icon button, and nav links on phones. The primary button is 48px.", "section": "layout" },
+      { "name": "The Court Stays Out of the Data Rule", "body": "Court lines are structural in exactly two places: the landing's half-court hero and the half-court divider (a line with a centre circle) between the two teams on the box score. The only other court drawing is the decorative arc in the header band, clipped to 240px tall (200px on phones), hidden on the landing, and it must never cross a table, a game row, or a form control.", "section": "layout" },
+      { "name": "The Flat Floor Rule", "body": "Nothing floats. If a component needs separation, it gets a hairline or a surface tone, not a shadow.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do use gold only for a winning score, a win result, a table leader, or a career high; in light mode use the darker gold tone for any text below display size.",
+      "Do keep purple to links, focus rings, selected states and the primary button.",
+      "Do set page titles and final scores in Anton, and everything else, including all numbers, in Barlow with tabular numerals.",
+      "Do wrap every gamer tag in a no-wrap span so lineups break only between names.",
+      "Do make every games number in a stat table link to a game log filtered to exactly that many games.",
+      "Do pin the name column and put less-used columns behind \"More stats\".",
+      "Do keep every tap target at least 44px tall.",
+      "Do build new lists of games from the game row: time or date, score with the winner in gold, top scorers, optional player line, arrow at the right edge.",
+      "Do keep state changes at 150ms and disable them under reduced motion."
+    ],
+    "donts": [
+      "Don't draw court lines anywhere except the landing hero, the box-score half-court divider, and the clipped header band; the header arc must never cross data or form controls, and it stays hidden on the landing.",
+      "Don't use gold for hover, focus, branding or decoration.",
+      "Don't use Anton for section heads, captions, stat values or records.",
+      "Don't add shadows; separate with hairlines and surface tones.",
+      "Don't use NBA or Getty photography, or league or team marks.",
+      "Don't add small uppercase labels above headings; the only uppercase small text is the stat table column header."
+    ]
+  }
+}

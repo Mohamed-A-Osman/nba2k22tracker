@@ -3,8 +3,8 @@
 {% block main %}
 <section class="hero">
   <div class="hero-copy">
-    <h1 class="display">Who's carrying<br><span>the squad?</span></h1>
-    <p class="lede">All {{ h.games }} games {{ h.players }} of us played from {{ h.first_month }} to {{ h.last_month }}, box score by box score, broken down by player, matchup and lineup.</p>
+    <h1 class="display">Every game<br><span>we played.</span></h1>
+    <p class="lede">{{ h.games }} games of NBA 2K22 between {{ h.players }} of us, {{ h.first_month }} to {{ h.last_month }}. Open any box score, or see who plays best with whom.</p>
     <div class="actions">
       <a class="button" href="{{ url_for('v2.games') }}">
         Open the game log

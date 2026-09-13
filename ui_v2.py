@@ -3,9 +3,16 @@
 Every stat row links to the games behind it, and those links always find exactly the
 number of games the row shows.
 """
-from flask import Blueprint, abort, render_template, request, url_for
+import mimetypes
+from pathlib import Path
 
+from flask import Blueprint, abort, render_template, request, send_from_directory, url_for
+
+import data
 import stats
+
+# Python on Windows doesn't know .webp, which would serve the screenshots as downloads
+mimetypes.add_type('image/webp', '.webp')
 
 bp = Blueprint('v2', __name__)
 
@@ -150,9 +157,19 @@ def game(game_id):
     everything = stats.box_scores()
     index = everything.index(found)
     unlisted = {team.side: team.points - sum(player.points for player in team.players) for team in found.teams}
-    return render_template('v2/game.html', game=found, unlisted=unlisted,
+    shot = stats.screenshots().get(game_id)
+    return render_template('v2/game.html', game=found, unlisted=unlisted, shot=shot,
+                           shot_url=url_for('v2.screenshot', filename=shot[0]) if shot else None,
                            newer=everything[index - 1] if index > 0 else None,
                            older=everything[index + 1] if index + 1 < len(everything) else None)
+
+
+@bp.route('/screenshots/<path:filename>')
+def screenshot(filename):
+    # Deployed, CloudFront serves these straight from S3; locally they come from the data folder
+    if data.DATA_SOURCE.startswith('s3://'):
+        abort(404)
+    return send_from_directory(Path(data.DATA_SOURCE) / 'screenshots', filename, max_age=86400)
 
 
 @bp.route('/CareerAvg')

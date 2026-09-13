@@ -23,6 +23,14 @@
   {% endif %}
 </div>
 
+{% if shot %}
+{% set file, width, height = shot %}
+<figure class="screenshot">
+  <a href="{{ shot_url }}"><img src="{{ shot_url }}" width="{{ width }}" height="{{ height }}" loading="lazy" decoding="async" alt="The in-game NBA 2K22 box score for this game, T1 {{ t1.points }} to T2 {{ t2.points }}"></a>
+  <figcaption class="note">The final box score as captured in the game. Select it to open it full size.</figcaption>
+</figure>
+{% endif %}
+
 <div class="box-teams">
   {% for team in game.teams %}
   {% if not loop.first %}

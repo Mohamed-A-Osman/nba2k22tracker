@@ -1,9 +1,10 @@
 """In-memory DuckDB copy of the stats data, loaded from Parquet files.
 
-DATA_SOURCE holds player_stats.parquet and game_totals.parquet. It is either a local folder
-(defaults to ./data, created by scripts/export_to_parquet.py) or an S3 prefix like
-s3://bucket/data, in which case the files are downloaded to the temp folder first.
-Results of @cached functions are kept until those files change.
+DATA_SOURCE holds player_stats.parquet and game_totals.parquet, plus screenshots.parquet when
+the box-score screenshots have been imported. It is either a local folder (defaults to ./data,
+created by scripts/export_to_parquet.py) or an S3 prefix like s3://bucket/data, in which case
+the files are downloaded to the temp folder first. Results of @cached functions are kept until
+those files change.
 """
 import functools
 import os
@@ -16,6 +17,8 @@ import duckdb
 
 DATA_SOURCE = os.environ.get("DATA_SOURCE", str(Path(__file__).parent / "data"))
 TABLES = ("player_stats", "game_totals")
+# Loaded only when present: the screenshot index written by scripts/import_screenshots.py
+OPTIONAL_TABLES = ("screenshots",)
 # How often to check whether the data files changed
 VERSION_CHECK_SECONDS = 60
 
@@ -51,28 +54,41 @@ def _s3_location(source, table):
     return bucket, f"{prefix}/{table}.parquet" if prefix else f"{table}.parquet"
 
 
-def _files_version(source):
+def _version_of(source, table):
+    """A value that changes when the table's file changes, or None if an optional file is missing."""
     if source.startswith("s3://"):
-        return tuple(_s3_client().head_object(Bucket=bucket, Key=key)["ETag"]
-                     for bucket, key in (_s3_location(source, table) for table in TABLES))
-    return tuple((Path(source) / f"{table}.parquet").stat().st_mtime_ns for table in TABLES)
+        bucket, key = _s3_location(source, table)
+        try:
+            return _s3_client().head_object(Bucket=bucket, Key=key)["ETag"]
+        except Exception:
+            if table in OPTIONAL_TABLES:
+                return None
+            raise
+    path = Path(source) / f"{table}.parquet"
+    if table in OPTIONAL_TABLES and not path.exists():
+        return None
+    return path.stat().st_mtime_ns
 
 
-def _local_folder(source):
-    """Folder with the Parquet files, downloading them from S3 first if needed."""
+def _files_version(source):
+    return tuple(_version_of(source, table) for table in TABLES + OPTIONAL_TABLES)
+
+
+def _local_folder(source, tables):
+    """Folder with the tables' Parquet files, downloading them from S3 first if needed."""
     if not source.startswith("s3://"):
         return source
     folder = Path(tempfile.gettempdir()) / "nba2k22-data"
     folder.mkdir(exist_ok=True)
-    for table in TABLES:
+    for table in tables:
         bucket, key = _s3_location(source, table)
         _s3_client().download_file(bucket, key, str(folder / f"{table}.parquet"))
     return folder
 
 
-def _load(folder):
+def _load(folder, tables):
     con = duckdb.connect()
-    for table in TABLES:
+    for table in tables:
         path = (Path(folder) / f"{table}.parquet").as_posix()
         con.execute(f"CREATE TABLE {table} AS SELECT * FROM read_parquet('{path}')")
     con.execute(PLAYER_GAMES_VIEW)
@@ -88,7 +104,8 @@ def _refresh():
             return _con
         version = _files_version(DATA_SOURCE)
         if version != _version:
-            _con = _load(_local_folder(DATA_SOURCE))
+            present = [table for table, v in zip(TABLES + OPTIONAL_TABLES, version) if v is not None]
+            _con = _load(_local_folder(DATA_SOURCE, present), present)
             _version = version
             _cache.clear()
         _checked_at = now
@@ -99,6 +116,10 @@ def query(sql, params=None):
     """Run a query with $name parameters and return all rows as tuples."""
     # cursor() gives each call its own connection handle, so threads don't share state
     return _refresh().cursor().execute(sql, params or {}).fetchall()
+
+
+def has_table(name):
+    return query("SELECT count(*) FROM information_schema.tables WHERE table_name = $name", {"name": name})[0][0] > 0
 
 
 def cached(fn):

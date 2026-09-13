@@ -916,6 +916,23 @@ input:focus-visible + .segment {
     margin-top: 40px;
 }
 
+/* The game's own box-score screenshot, the proof behind the numbers */
+.screenshot {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 880px;
+    margin: 0 0 40px;
+}
+
+.screenshot img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+}
+
 /* ---------- Career highs ---------- */
 
 .records {

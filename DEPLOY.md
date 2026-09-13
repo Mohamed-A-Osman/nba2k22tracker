@@ -52,10 +52,16 @@ Export from your local Postgres, then upload to the data bucket the deploy creat
 ```powershell
 $env:PG_URL = "postgresql://postgres:<password>@localhost/NBA2K22"
 python scripts/export_to_parquet.py
+# Box-score screenshots: list every folder that holds them; each game keeps one image
+python scripts/import_screenshots.py "<screenshot folder>" "<another screenshot folder>"
 $bucket = aws cloudformation describe-stacks --stack-name nba2k22tracker `
   --query "Stacks[0].Outputs[?OutputKey=='DataBucketName'].OutputValue" --output text
-aws s3 cp data/ "s3://$bucket/data/" --recursive
+aws s3 cp data/ "s3://$bucket/data/" --recursive --exclude "screenshots/*"
+aws s3 cp data/screenshots/ "s3://$bucket/data/screenshots/" --recursive --content-type image/webp
 ```
+
+The upload copies the screenshots too (`data/screenshots/`), and CloudFront serves them
+straight from S3 at `/screenshots/...`.
 
 Open the site URL. After you upload new data, the site picks it up within about 6 minutes
 (1 minute for the app to notice, plus up to 5 minutes of CloudFront caching).

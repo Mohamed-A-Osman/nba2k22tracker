@@ -51,6 +51,22 @@ Resources:
               StringEquals:
                 AWS:SourceArn: !Sub arn:aws:cloudfront::${AWS::AccountId}:distribution/${Distribution}
 
+  # CloudFront may read the box-score screenshots, and nothing else, from the data bucket
+  DataBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref DataBucket
+      PolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: cloudfront.amazonaws.com
+            Action: s3:GetObject
+            Resource: !Sub ${DataBucket.Arn}/data/screenshots/*
+            Condition:
+              StringEquals:
+                AWS:SourceArn: !Sub arn:aws:cloudfront::${AWS::AccountId}:distribution/${Distribution}
+
   HttpApi:
     Type: AWS::Serverless::HttpApi
     Properties:
@@ -124,6 +140,13 @@ Resources:
             OriginAccessControlId: !GetAtt StaticOriginAccessControl.Id
             S3OriginConfig:
               OriginAccessIdentity: ''
+          # /screenshots/<file> maps to data/screenshots/<file> in the data bucket
+          - Id: screenshots
+            DomainName: !GetAtt DataBucket.RegionalDomainName
+            OriginPath: /data
+            OriginAccessControlId: !GetAtt StaticOriginAccessControl.Id
+            S3OriginConfig:
+              OriginAccessIdentity: ''
         DefaultCacheBehavior:
           TargetOriginId: api
           ViewerProtocolPolicy: redirect-to-https
@@ -135,6 +158,11 @@ Resources:
         CacheBehaviors:
           - PathPattern: /static/*
             TargetOriginId: static
+            ViewerProtocolPolicy: redirect-to-https
+            CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6  # Managed-CachingOptimized
+            Compress: true
+          - PathPattern: /screenshots/*
+            TargetOriginId: screenshots
             ViewerProtocolPolicy: redirect-to-https
             CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6  # Managed-CachingOptimized
             Compress: true

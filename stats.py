@@ -2,7 +2,7 @@
 from collections import namedtuple
 from datetime import datetime, timedelta
 
-from data import cached, query
+from data import cached, has_table, query
 
 POSITIONS = ("PG", "SG", "SF", "PF", "C")
 # Career-high categories users can pick. Also the only column names ever put into SQL.
@@ -258,6 +258,15 @@ def _games_by_id():
 
 def game(game_id):
     return _games_by_id().get(game_id)
+
+
+@cached
+def screenshots():
+    """The box-score screenshot for each game that has one: {game id: (file, width, height)}."""
+    if not has_table("screenshots"):
+        return {}
+    return {game_id: (file, width, height)
+            for game_id, file, width, height in query('SELECT "gameID", file, width, height FROM screenshots')}
 
 
 def player_in(game, name):

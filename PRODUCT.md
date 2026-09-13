@@ -44,7 +44,8 @@ It is the only record of this group's games. NBA 2K does not keep a friend group
 ## Evidence on Hand
 
 - Real data: `data/player_stats.parquet` (1,398 player-game rows) and `data/game_totals.parquet` (304 team rows), exported from the local Postgres master copy.
-- There are no photos of the group, no game screenshots and no testimonials. Do not invent any.
+- Box-score screenshots (console captures) for all 152 games, imported into `data/screenshots/` by `scripts/import_screenshots.py` and shown on each game's page. Seven extra captures taken before a game's final buzzer are left out.
+- There are no photos of the group and no testimonials. Do not invent any.
 
 ## Product Principles
 
